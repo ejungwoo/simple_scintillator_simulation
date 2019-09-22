@@ -1,0 +1,25 @@
+/my/init/detector/tpc
+/my/init/detector/bar
+#/my/init/detector/bar0
+#/my/init/detector/wall
+
+/my/init/field/name data/field.root
+
+/run/initialize
+
+/run/printProgress 10
+/analysis/verbose 1
+
+/analysis/setFileName data/run_test_neutron
+/gps/position  0 -205 -13.2 mm
+/gps/particle  neutron
+/gps/energy    500 MeV
+/gps/direction 0.493942 0 0.869495
+/run/beamOn 100
+
+/analysis/setFileName data/run_test_proton
+/gps/position  0 -205 -13.2 mm
+/gps/particle  neutron
+/gps/energy    500 MeV
+/gps/direction 0.64278761 0 0.76604444
+/run/beamOn 100

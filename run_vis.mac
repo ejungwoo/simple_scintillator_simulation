@@ -1,0 +1,59 @@
+# build detectors before initialize
+# select "one" from bar, bar0, and wall
+/my/init/detector/tpc
+/my/init/detector/bar
+#/my/init/detector/bar0
+#/my/init/detector/wall
+
+#field
+/my/init/field/name data/field.root
+
+#initialize run
+/run/initialize
+
+# create viewer draw volumes
+/vis/open OGL 600x600-0+0
+/vis/drawVolume
+
+# print event process status
+/vis/verbose warnings 
+
+# print tracking status
+/tracking/verbose 1
+
+# draw volumes in surface style
+/vis/viewer/set/style surface
+/vis/viewer/set/viewpointVector 0.5 1 0.5
+
+# draw in perspective
+/vis/viewer/set/projection perspective 10 deg
+
+# draw axes
+/vis/scene/add/axes 0 0 0 400 mm
+
+# set background colour
+/vis/viewer/set/background white
+
+# draw trajectory (smooth / rich)
+/vis/scene/add/trajectories smooth
+
+# draw step points
+/vis/modeling/trajectories/create/drawByCharge
+/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true
+/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 1
+
+# draw all events when multiple events are simulated at once
+/vis/scene/endOfEventAction accumulate
+
+# general particle source setting
+/gps/position  0 -205 -13.24 mm
+/gps/particle  proton
+/gps/energy    500 MeV
+/gps/direction 0.64278761 0 0.76604444
+
+#analysis
+/analysis/verbose 1
+/analysis/setFileName data/run_vis
+
+# run
+/run/beamOn 1
