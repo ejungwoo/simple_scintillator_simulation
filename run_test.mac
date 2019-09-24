@@ -1,25 +1,46 @@
+/my/init/field/name data/field.root
 /my/init/detector/tpc
 /my/init/detector/bar
-#/my/init/detector/bar0
-#/my/init/detector/wall
 
-/my/init/field/name data/field.root
+#############################################
 
 /run/initialize
 
-/run/printProgress 10
 /analysis/verbose 1
 
+#############################################
+
+/gps/position 0 -205 -13.25 mm
+#
+/gps/ang/type iso
+/gps/ang/mintheta 90 deg
+/gps/ang/maxtheta 160 deg
+/gps/ang/minphi 179.99 deg
+/gps/ang/maxphi 180.01 deg
+#
+/gps/ene/type Lin
+/gps/ene/min 100 MeV
+/gps/ene/max 3000 MeV
+/gps/ene/intercept 100
+/gps/ene/gradient 0
+
+#############################################
+
 /analysis/setFileName data/run_test_neutron
-/gps/position  0 -205 -13.2 mm
-/gps/particle  neutron
-/gps/energy    500 MeV
-/gps/direction 0.493942 0 0.869495
-/run/beamOn 100
+#
+/gps/particle neutron
+#
+/run/printProgress 2000
+/run/beamOn 20000
+
+#############################################
 
 /analysis/setFileName data/run_test_proton
-/gps/position  0 -205 -13.2 mm
-/gps/particle  neutron
-/gps/energy    500 MeV
-/gps/direction 0.64278761 0 0.76604444
-/run/beamOn 100
+#
+/gps/particle proton
+#
+#/gps/ene/type Mono
+#/gps/direction 0.64278761 0 0.76604444
+#
+/run/printProgress 2000
+/run/beamOn 20000
