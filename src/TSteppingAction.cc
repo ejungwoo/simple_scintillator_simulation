@@ -1,9 +1,5 @@
-#include "G4RunManager.hh"
-#include "G4SystemOfUnits.hh"
-#include "G4EventManager.hh"
-#include "G4Event.hh"
-
 #include "TSteppingAction.hh"
+#include "G4StepStatus.hh"
 
 TSteppingAction::TSteppingAction(TEventAction *eventAction)
 : G4UserSteppingAction()
@@ -13,24 +9,36 @@ TSteppingAction::TSteppingAction(TEventAction *eventAction)
 
 void TSteppingAction::UserSteppingAction(const G4Step* step)
 {
-  auto pre = step -> GetPreStepPoint();
+  auto preStep = step -> GetPreStepPoint();
+  auto postStep = step -> GetPostStepPoint();
 
-  G4int preid = pre -> GetPhysicalVolume() -> GetCopyNo();
-  if (preid == 2)
-  {
+  auto preID = preStep -> GetPhysicalVolume() -> GetCopyNo();
+  if (preID == 2)
     fEventAction -> AddEnergyDeposit(step -> GetTotalEnergyDeposit());
 
-    if (step -> GetTrack() -> GetTrackID() == 1)
-    {
-      auto post = step -> GetPostStepPoint();
-      fEventAction -> SetKineticEnergy1(pre -> GetKineticEnergy());
-      fEventAction -> SetMomentum2(post -> GetMomentum());
+  if (step -> GetTrack() -> GetTrackID() != 1)
+    return;
 
-      G4int postid = post -> GetPhysicalVolume() -> GetCopyNo();
-      if (postid != 2) {
-        fEventAction -> SetKineticEnergy2(post -> GetKineticEnergy());
-        fEventAction -> SetMomentum2(post -> GetMomentum());
-      }
-    }
+  if (step -> GetPostStepPoint() -> GetStepStatus() == fWorldBoundary)
+    return;
+
+  auto postID = postStep -> GetPhysicalVolume() -> GetCopyNo();
+
+  if (preID == 1 && postID == 2)
+  {
+    fEventAction -> SetPoint1(
+        postStep -> GetKineticEnergy(),
+        postStep -> GetMomentum(),
+        postStep -> GetGlobalTime()
+        );
+  }
+
+  if (preID == 2 && postID == 1)
+  {
+    fEventAction -> SetPoint2(
+        postStep -> GetKineticEnergy(),
+        postStep -> GetMomentum(),
+        postStep -> GetGlobalTime()
+        );
   }
 }

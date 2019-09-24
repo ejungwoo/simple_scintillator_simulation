@@ -10,6 +10,7 @@
 #include "TPrimaryGeneratorAction.hh"
 #include "TRunAction.hh"
 #include "TEventAction.hh"
+#include "TTrackingAction.hh"
 #include "TSteppingAction.hh"
 
 TRunManager::TRunManager()
@@ -69,9 +70,6 @@ void TRunManager::BuildInitsAndActions()
   auto detectorConstruction = new TDetectorConstruction();
   SetUserInitialization(detectorConstruction);
 
-  fMessenger = new TMessenger;
-  fMessenger -> SetDetectorConstruction(detectorConstruction);
-
   auto primaryGenerator = new TPrimaryGeneratorAction();
   SetUserAction(primaryGenerator);
 
@@ -81,8 +79,14 @@ void TRunManager::BuildInitsAndActions()
   auto eventAction = new TEventAction(runAction);
   SetUserAction(eventAction);
 
+  auto trackingAction = new TTrackingAction(eventAction);
+  SetUserAction(trackingAction);
+
   auto steppingAction = new TSteppingAction(eventAction);
   SetUserAction(steppingAction);
+
+  fMessenger = new TMessenger;
+  fMessenger -> SetDetectorConstruction(detectorConstruction);
 }
 
 void TRunManager::InitializeGeometry()

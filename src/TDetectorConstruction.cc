@@ -102,7 +102,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     rotation -> rotateY(-phi_bar);
     new G4PVPlacement(rotation, G4ThreeVector(0,oy_bar,.5*lz_bar), logicBar, "bar", logicWorld, false, id_bar, true);
 
-    auto att = new G4VisAttributes(G4Colour(G4Colour::Green()));
+    auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
     att -> SetForceWireframe(true);
     logicBar -> SetVisAttributes(att);
   }
@@ -133,7 +133,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     rotation -> rotateY(-phi_bar);
     new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicBar, "bar", logicWorld, false, id_bar, true);
 
-    auto att = new G4VisAttributes(G4Colour(G4Colour::Green()));
+    auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
     att -> SetForceWireframe(true);
     logicBar -> SetVisAttributes(att);
   }
@@ -149,7 +149,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     rotation -> rotateY(-phi_bar);
     new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicBar, "bar", logicWorld, false, id_bar, true);
 
-    auto att = new G4VisAttributes(G4Colour(G4Colour::Green()));
+    auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
     att -> SetForceWireframe(true);
     logicBar -> SetVisAttributes(att);
   }
