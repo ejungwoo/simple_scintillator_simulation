@@ -24,22 +24,21 @@ TRunManager::~TRunManager()
 
 void TRunManager::Run(int argc, char **argv, const G4String &type)
 {
-  bool isGivenMacro = false;
-  G4String macroName = "run_vis.mac";
+  G4String macroName = "run_test.vis";
   if (argc != 1) {
-    isGivenMacro = true;
     macroName = argv[1];
   }
+
+  bool isVisMacro = false;
+  if (macroName.contains(".vis"))
+    isVisMacro = true;
 
   BuildInitsAndActions();
 
   G4UImanager* uiManager = G4UImanager::GetUIpointer();
   G4String command = "/control/execute ";
 
-  if (isGivenMacro) {
-    uiManager -> ApplyCommand(command+macroName);
-  }
-  else {
+  if (isVisMacro) {
     G4VisManager* visManager = new G4VisExecutive;
     visManager -> Initialize();
 
@@ -49,6 +48,9 @@ void TRunManager::Run(int argc, char **argv, const G4String &type)
 
     delete uiExecutive;
     delete visManager;
+  }
+  else {
+    uiManager -> ApplyCommand(command+macroName);
   }
 }
 

@@ -18,6 +18,7 @@ class TRunManager : public G4RunManager
 
     void BuildInitsAndActions();
 
+    /// Suppress String Stream Buffer
     void SetSuppressSSBInitGeometry(bool val) { fSuppressSSBInitGeometry = val; }
     void SetSuppressSSBInitPhysic(bool val)   { fSuppressSSBInitPhysics = val; }
     void SetSuppressSSBBeamO(bool val)        { fSuppressSSBBeamOn = val; }

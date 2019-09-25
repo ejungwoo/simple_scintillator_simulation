@@ -24,7 +24,7 @@ void TSteppingAction::UserSteppingAction(const G4Step* step)
 
   auto postID = postStep -> GetPhysicalVolume() -> GetCopyNo();
 
-  if (preID == 1 && postID == 2)
+  if (preID == 0 && postID == 2)
   {
     fEventAction -> SetPoint1(
         postStep -> GetKineticEnergy(),
@@ -33,7 +33,7 @@ void TSteppingAction::UserSteppingAction(const G4Step* step)
         );
   }
 
-  if (preID == 2 && postID == 1)
+  if (preID == 2 && postID == 0)
   {
     fEventAction -> SetPoint2(
         postStep -> GetKineticEnergy(),

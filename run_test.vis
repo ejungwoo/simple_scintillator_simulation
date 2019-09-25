@@ -43,25 +43,40 @@
 # draw all events when multiple events are simulated at once
 /vis/scene/endOfEventAction accumulate
 
-/gps/position  0 -205 -13.24 mm
-/gps/particle  neutron
-
+# 1111111111111111111111111111111111111111
+# gps
+#/gps/position  0 -205 -13.24 mm
+#/gps/particle  neutron
+##
+#/gps/ang/type iso
+#/gps/ang/mintheta 90 deg
+#/gps/ang/maxtheta 160 deg
+#/gps/ang/minphi 179.99 deg
+#/gps/ang/maxphi 180.01 deg
+##
+#/gps/ene/type Lin
+#/gps/ene/min 100 MeV
+#/gps/ene/max 3000 MeV
+#/gps/ene/intercept 100
+#/gps/ene/gradient 0
 #
-/gps/ang/type iso
-/gps/ang/mintheta 90 deg
-/gps/ang/maxtheta 160 deg
-/gps/ang/minphi 179.99 deg
-/gps/ang/maxphi 180.01 deg
+##analysis
+#/analysis/verbose 1
+#/analysis/setFileName data/run_vis
 #
-/gps/ene/type Lin
-/gps/ene/min 100 MeV
-/gps/ene/max 3000 MeV
-/gps/ene/intercept 100
-/gps/ene/gradient 0
+## run
+#/run/beamOn 200
+# 1111111111111111111111111111111111111111
 
-#analysis
+# 2222222222222222222222222222222222222222
 /analysis/verbose 1
 /analysis/setFileName data/run_vis
-
-# run
-/run/beamOn 200
+#
+/gps/particle proton
+/gps/ene/type Mono
+/gps/energy 500 MeV
+/gps/position 0 -205 -13.25 mm
+/gps/direction 0.64278761 0 0.76604444
+#
+/run/beamOn 1
+# 2222222222222222222222222222222222222222
