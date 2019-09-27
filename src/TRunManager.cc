@@ -24,13 +24,13 @@ TRunManager::~TRunManager()
 
 void TRunManager::Run(int argc, char **argv, const G4String &type)
 {
-  G4String macroName = "run_test.vis";
+  G4String macroName = "vis_test.mac";
   if (argc != 1) {
     macroName = argv[1];
   }
 
   bool isVisMacro = false;
-  if (macroName.contains(".vis"))
+  if (macroName.index("vis")==0)
     isVisMacro = true;
 
   BuildInitsAndActions();
@@ -59,14 +59,14 @@ void TRunManager::BuildInitsAndActions()
   if (fSuppressSSBInitPhysics) {
     G4strstreambuf* suppressSSB = dynamic_cast<G4strstreambuf*>(G4cout.rdbuf(0));
     // Suppress print outs in between here ------------->
-    auto physicsList = new QGSP_INCLXX_HP;
-    SetUserInitialization(physicsList);
+    auto myPhysicsList = new QGSP_INCLXX_HP;
+    SetUserInitialization(myPhysicsList);
     // <------------- to here
     G4cout.rdbuf(suppressSSB);
   }
   else {
-    auto physicsList = new QGSP_INCLXX_HP;
-    SetUserInitialization(physicsList);
+    auto myPhysicsList = new QGSP_INCLXX_HP;
+    SetUserInitialization(myPhysicsList);
   }
 
   auto detectorConstruction = new TDetectorConstruction();
@@ -89,6 +89,7 @@ void TRunManager::BuildInitsAndActions()
 
   fMessenger = new TMessenger;
   fMessenger -> SetDetectorConstruction(detectorConstruction);
+  fMessenger -> SetPrimaryGeneratorAction(primaryGenerator);
 }
 
 void TRunManager::InitializeGeometry()

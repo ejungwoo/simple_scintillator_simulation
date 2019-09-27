@@ -3,9 +3,14 @@
 
 #include "G4UImessenger.hh"
 #include "G4UIcommand.hh"
-#include "G4UIcmdWithAString.hh"
 #include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWith3VectorAndUnit.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
+
 #include "TDetectorConstruction.hh"
+#include "TPrimaryGeneratorAction.hh"
 
 /**
  * - /my/init/detector/tpc
@@ -25,15 +30,28 @@ class TMessenger : public G4UImessenger
     void SetNewValue(G4UIcommand *command, G4String value);
 
     void SetDetectorConstruction(TDetectorConstruction *dc) { fDetectorConstruction = dc; }
+    void SetPrimaryGeneratorAction(TPrimaryGeneratorAction *pga) { fPrimaryGeneratorAction = pga; }
 
   private:
     TDetectorConstruction *fDetectorConstruction = nullptr;
+    TPrimaryGeneratorAction *fPrimaryGeneratorAction = nullptr;
 
     G4UIcmdWithAString *fCmdFieldFileName;
     G4UIcmdWithoutParameter *fCmdBuildTPC;
     G4UIcmdWithoutParameter *fCmdBuildBar;
     G4UIcmdWithoutParameter *fCmdBuildBar0;
     G4UIcmdWithoutParameter *fCmsBuildWall;
+
+    G4UIcmdWithoutParameter *fCmsSetParticleGun;
+    G4UIcmdWithAnInteger *fCmdParticlePDG;
+    G4UIcmdWithAString *fCmdParticleName;
+    G4UIcmdWith3VectorAndUnit *fCmdParticleVertex;
+    G4UIcmdWithADoubleAndUnit *fCmdParticleEnergy1;
+    G4UIcmdWithADoubleAndUnit *fCmdParticleEnergy2;
+    G4UIcmdWithADoubleAndUnit *fCmdParticlePhi1;
+    G4UIcmdWithADoubleAndUnit *fCmdParticlePhi2;
+    G4UIcmdWithADoubleAndUnit *fCmdParticleTheta1;
+    G4UIcmdWithADoubleAndUnit *fCmdParticleTheta2;
 };
 
 #endif

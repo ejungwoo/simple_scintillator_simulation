@@ -62,7 +62,7 @@
 #
 ##analysis
 #/analysis/verbose 1
-#/analysis/setFileName data/run_vis
+#/analysis/setFileName data/vis_test
 #
 ## run
 #/run/beamOn 200
@@ -70,13 +70,16 @@
 
 # 2222222222222222222222222222222222222222
 /analysis/verbose 1
-/analysis/setFileName data/run_vis
+/analysis/setFileName data/vis_test
 #
-/gps/particle proton
-/gps/ene/type Mono
-/gps/energy 500 MeV
-/gps/position 0 -205 -13.25 mm
-/gps/direction 0.64278761 0 0.76604444
+/my/pga/gun
+/my/pga/vertex  0 -205 -13.25 mm
+/my/pga/energy1 1000 MeV
+/my/pga/energy2 3000 MeV
+/my/pga/phi1    179.99 deg
+/my/pga/phi2    180.01 deg
+/my/pga/theta1  89.999 deg
+/my/pga/theta2  90.001 deg
 #
-/run/beamOn 1
+/run/beamOn 100
 # 2222222222222222222222222222222222222222
