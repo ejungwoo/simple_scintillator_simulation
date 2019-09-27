@@ -45,9 +45,9 @@ double TPrimaryGeneratorAction::UniformRandomInRange(double x1, double x2)
 
 G4ThreeVector TPrimaryGeneratorAction::DirectionByAngle(double phi, double theta)
 {
-  auto px = std::cos(theta*CLHEP::radian)*std::sin(phi*CLHEP::radian);
-  auto pz = std::cos(theta*CLHEP::radian)*std::cos(phi*CLHEP::radian);
-  auto py = std::sin(theta*CLHEP::radian);
+  auto px = std::sin(theta)*std::sin(phi);
+  auto pz = std::sin(theta)*std::cos(phi);
+  auto py = std::cos(theta);
 
   return G4ThreeVector(px,py,pz);
 }

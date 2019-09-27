@@ -23,11 +23,11 @@ class TPrimaryGeneratorAction : public G4VUserPrimaryGeneratorAction
     void SetParticle(int pdg)       { fGun -> SetParticleDefinition(fTable -> FindParticle(pdg));  }
     void SetParticleVertex(G4ThreeVector vertex) { fGun -> SetParticlePosition(vertex); }
     void SetParticleEnergy1(double val)  { fEnergy1 = val; }
-    void SetParticleEnergy2(double val)  { fEnergy1 = val; }
+    void SetParticleEnergy2(double val)  { fEnergy2 = val; }
     void SetParticlePhi1(double val)     { fPhi1 = val; }
-    void SetParticlePhi2(double val)     { fPhi1 = val; }
+    void SetParticlePhi2(double val)     { fPhi2 = val; }
     void SetParticleTheta1(double val)   { fTheta1 = val; }
-    void SetParticleTheta2(double val)   { fTheta1 = val; }
+    void SetParticleTheta2(double val)   { fTheta2 = val; }
   
   private:
     G4ThreeVector DirectionByAngle(double phi, double theta);

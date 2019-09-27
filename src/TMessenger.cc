@@ -57,7 +57,7 @@ void TMessenger::SetNewValue(G4UIcommand *command, G4String value)
   else if (command == fCmdParticleEnergy1) fPrimaryGeneratorAction -> SetParticleEnergy1( fCmdParticleEnergy1 -> GetNewDoubleValue(value) );
   else if (command == fCmdParticleEnergy2) fPrimaryGeneratorAction -> SetParticleEnergy2( fCmdParticleEnergy2 -> GetNewDoubleValue(value) );
   else if (command == fCmdParticlePhi1)    fPrimaryGeneratorAction -> SetParticlePhi1( fCmdParticlePhi1 -> GetNewDoubleValue(value) );
-  else if (command == fCmdParticlePhi1)    fPrimaryGeneratorAction -> SetParticlePhi2( fCmdParticlePhi1 -> GetNewDoubleValue(value) );
+  else if (command == fCmdParticlePhi2)    fPrimaryGeneratorAction -> SetParticlePhi2( fCmdParticlePhi2 -> GetNewDoubleValue(value) );
   else if (command == fCmdParticleTheta1)  fPrimaryGeneratorAction -> SetParticleTheta1( fCmdParticleTheta1 -> GetNewDoubleValue(value) );
-  else if (command == fCmdParticleTheta1)  fPrimaryGeneratorAction -> SetParticleTheta2( fCmdParticleTheta1 -> GetNewDoubleValue(value) );
+  else if (command == fCmdParticleTheta2)  fPrimaryGeneratorAction -> SetParticleTheta2( fCmdParticleTheta2 -> GetNewDoubleValue(value) );
 }
