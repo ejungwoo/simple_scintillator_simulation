@@ -43,6 +43,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
 
   auto matAir = nist -> FindOrBuildMaterial("G4_AIR");
   auto matBar = nist -> FindOrBuildMaterial("G4_XYLENE");
+  auto matWallSpace = matAir;
 
 
 
@@ -50,6 +51,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   auto id_world = 0;
   auto id_tpc = 1;
   auto id_bar = 2;
+  auto id_wallspace = id_world;
 
 
 
@@ -81,6 +83,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   auto lx_bar = 2500.*mm;
   auto ly_bar =   50.*mm;
   auto lz_bar =   50.*mm;
+  auto lz_wall= 400.*mm;
 
   auto dist_bar = 9093.85*mm;
   auto phi_bar = 29.579*CLHEP::deg;
@@ -122,6 +125,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     logicTPC -> SetVisAttributes(att);
   }
 
+
   if (fSetBuildBar)
   {
     PrintMessage("Set bar");
@@ -138,20 +142,59 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     logicBar -> SetVisAttributes(att);
   }
 
+
   if (fSetBuildWall)
   {
     PrintMessage("Set wall");
 
-    auto solidBar = new G4Box("bar", .5*lx_bar, .5*ly_bar, .5*lz_bar);
-    auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
-    if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
+    auto solidWallSpace = new G4Box("wallSpace", .6*lx_bar, .6*lx_bar, 2.*lz_wall);
+    auto logicWallSpace = new G4LogicalVolume(solidWallSpace, matWallSpace, "wallSpace");
     auto rotation = new G4RotationMatrix();
     rotation -> rotateY(-phi_bar);
-    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicBar, "bar", logicWorld, false, id_bar, true);
+    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicWallSpace, "bar", logicWorld, false, id_wallspace, true);
 
-    auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
-    att -> SetForceWireframe(true);
-    logicBar -> SetVisAttributes(att);
+    {
+      auto att = new G4VisAttributes(G4Colour(G4Colour::Magenta()));
+      att -> SetForceWireframe(true);
+      logicWallSpace -> SetVisAttributes(att);
+    }
+
+    {
+      auto solidBar = new G4Box("bar", .5*lx_bar, .5*ly_bar, .5*lz_bar);
+      auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
+      if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
+      for (auto layer : {0,2,4,6})
+        for (auto pm : {-1,1})
+          for (auto ibar=0; ibar<25; ++ibar) {
+            auto oy_bar2 = .5*ly_bar+ibar*ly_bar;
+            auto oz_bar2 = lz_bar*layer;
+            new G4PVPlacement(0, G4ThreeVector(0,pm*oy_bar2,oz_bar2), logicBar, "bar", logicWallSpace, false, id_bar, true);
+          }
+
+      auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
+      att -> SetForceWireframe(true);
+      logicBar -> SetVisAttributes(att);
+    }
+
+    {
+      auto solidBar = new G4Box("bar", .5*ly_bar, .5*lx_bar, .5*lz_bar);
+      auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
+      if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
+      auto rotation = new G4RotationMatrix();
+      rotation -> rotateY(-phi_bar);
+      for (auto layer : {1,3,5,7})
+        for (auto pm : {-1,1})
+          for (auto ibar=0; ibar<25; ++ibar) {
+            auto oy_bar2 = .5*ly_bar+ibar*ly_bar;
+            auto oz_bar2 = lz_bar*layer;
+            new G4PVPlacement(rotation, G4ThreeVector(pm*oy_bar2,0,oz_bar2), logicBar, "bar", logicWallSpace, false, id_bar, true);
+          }
+
+      auto att = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+      att -> SetForceWireframe(true);
+      logicBar -> SetVisAttributes(att);
+    }
+
   }
 
   if (fCreateField)
