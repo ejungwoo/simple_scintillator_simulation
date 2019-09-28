@@ -1,9 +1,15 @@
 void make_proton_searching_crosssection_uniform_angle()
 {
+  bool isVisMac = true;
+
   auto numEvents = 1000000;
+  if (isVisMac)
+    numEvents = 100;
   auto numProgress = numEvents / 50;
 
   TString runName = "uang"; 
+  if (isVisMac)
+    runName = TString("vis_") + runName;
   TString particleName = "proton";
   TString arxivName = TString("arxiv")+"_"+runName+"_"+particleName;
 
@@ -18,13 +24,18 @@ void make_proton_searching_crosssection_uniform_angle()
   auto lo = (TGraph *) file -> Get("lo");
 
   TString submitAllName = Form("all_%s_submits_%s.sh", runName.Data(), particleName.Data());
-  ofstream allFile(submitAllName);
-  cout << "all file: " << submitAllName << endl;
+  ofstream allFile;
+  if (!isVisMac) {
+    allFile.open(submitAllName);
+    cout << "all file: " << submitAllName << endl;
+  }
 
-  ofstream arxivFile(arxivName+".sh");
+  ofstream arxivFile;
+  arxivFile.open(arxivName+".sh");
   arxivFile << "mkdir -p " << arxivName << endl;
   arxivFile << "mv " << arxivName << ".sh " << arxivName << endl;
-  arxivFile << "mv " << submitAllName << " " << arxivName << endl;
+  if (!isVisMac)
+    arxivFile << "mv " << submitAllName << " " << arxivName << endl;
 
   auto dEnergy = 15.;
   for (auto energy = 100; energy <= 3000; energy+=15)
@@ -36,17 +47,19 @@ void make_proton_searching_crosssection_uniform_angle()
     auto phi1 = lo -> Eval(energy) - .02;
     auto phi2 = up -> Eval(energy) + .02;
 
-    allFile << "csub " << submitName << endl;
+    ofstream subfile;
+    if (!isVisMac) {
+      allFile << "csub " << submitName << endl;
 
-    //cout << "submit file: " << submitName << endl;
-    ofstream subfile(submitName.Data());
-    subfile << "# cpu 2" << endl;
-    subfile << "# mem 300" << endl;
-    subfile << "./execute.g4sim " << macroName << endl;
-    arxivFile << "mv " << submitName << " " << arxivName << endl;
-    arxivFile << "mv " << submitName << "*.err " << arxivName << " 2>/dev/null" << endl;
-    arxivFile << "mv " << submitName << "*.out " << arxivName << " 2>/dev/null" << endl;
-    arxivFile << "mv " << submitName << "*.log " << arxivName << " 2>/dev/null" << endl;
+      subfile.open(submitName.Data());
+      subfile << "# cpu 2" << endl;
+      subfile << "# mem 300" << endl;
+      subfile << "./execute.g4sim " << macroName << endl;
+      arxivFile << "mv " << submitName << " " << arxivName << endl;
+      arxivFile << "mv " << submitName << "*.err " << arxivName << " 2>/dev/null" << endl;
+      arxivFile << "mv " << submitName << "*.out " << arxivName << " 2>/dev/null" << endl;
+      arxivFile << "mv " << submitName << "*.log " << arxivName << " 2>/dev/null" << endl;
+    }
 
     cout << "macro file: " << macroName << endl;
     ofstream macFile(macroName.Data());
@@ -63,14 +76,31 @@ void make_proton_searching_crosssection_uniform_angle()
     macFile << "#" << endl;
     macFile << "/run/initialize" << endl;
 
+    if (isVisMac) {
+      macFile << "#" << endl;
+      macFile << "/vis/open OGL 600x600-0+0" << endl;
+      macFile << "/vis/drawVolume" << endl;
+      macFile << "/vis/verbose warnings " << endl;
+      macFile << "/vis/viewer/set/style surface" << endl;
+      macFile << "/vis/viewer/set/viewpointVector 0.5 1 0.5" << endl;
+      macFile << "/vis/viewer/set/projection perspective 10 deg" << endl;
+      macFile << "/vis/scene/add/axes 0 0 0 400 mm" << endl;
+      macFile << "/vis/viewer/set/background white" << endl;
+      macFile << "/vis/scene/add/trajectories smooth" << endl;
+      macFile << "/vis/modeling/trajectories/create/drawByCharge" << endl;
+      macFile << "/vis/modeling/trajectories/drawByCharge-0/default/setDrawStepPts true" << endl;
+      macFile << "/vis/modeling/trajectories/drawByCharge-0/default/setStepPtsSize 1" << endl;
+      macFile << "/vis/scene/endOfEventAction accumulate" << endl;
+    }
+
     macFile << "#" << endl;
     macFile << "/my/pga/gun" << endl;
     macFile << "/my/pga/name    " << particleName << endl;
     macFile << "/my/pga/vertex  " << vpos.x() << " " << vpos.y() << " " << vpos.z() << " mm" << endl;
     macFile << "/my/pga/energy1 " << energy-.5*dEnergy << " MeV" << endl;
     macFile << "/my/pga/energy2 " << energy+.5*dEnergy << " MeV" << endl;
-    macFile << "/my/pga/phi1    " << phi1 << " deg" << endl;
-    macFile << "/my/pga/phi2    " << phi2 << " deg" << endl;
+    macFile << "/my/pga/phi2    " << .5*TMath::Pi() - phi1 << " rad" << endl;
+    macFile << "/my/pga/phi1    " << .5*TMath::Pi() - phi2 << " rad" << endl;
     macFile << "/my/pga/theta1  " << "89.999 deg" << endl;
     macFile << "/my/pga/theta2  " << "90.001 deg" << endl;
 
