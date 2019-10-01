@@ -50,7 +50,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
 
   auto id_world = 0;
   auto id_tpc = 1;
-  auto id_bar = 2;
+  auto id_bar0 = GetBarID(0,0);
   auto id_wallspace = id_world;
 
 
@@ -80,10 +80,10 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   auto oy_tpc = -ly_tpc/2.;
   auto oz_tpc =  lz_tpc/2. - oz_target;
 
-  auto lx_bar = 2500.*mm;
-  auto ly_bar =   50.*mm;
-  auto lz_bar =   50.*mm;
-  auto lz_wall= 400.*mm;
+  auto lz_wall=  400.*mm;
+
+  auto llong_bar = 2500.*mm;
+  auto lshort_bar = 50.*mm;
 
   auto dist_bar = 9093.85*mm;
   auto phi_bar = 29.579*CLHEP::deg;
@@ -98,12 +98,12 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   {
     PrintMessage("Set bar at target origin");
 
-    auto solidBar = new G4Box("bar", .5*lx_bar, .5*ly_bar, .5*lz_bar);
+    auto solidBar = new G4Box("bar", .5*llong_bar, .5*lshort_bar, .5*lshort_bar);
     auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
     if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
     auto rotation = new G4RotationMatrix();
     rotation -> rotateY(-phi_bar);
-    new G4PVPlacement(rotation, G4ThreeVector(0,oy_bar,.5*lz_bar), logicBar, "bar", logicWorld, false, id_bar, true);
+    new G4PVPlacement(rotation, G4ThreeVector(0,oy_bar,.5*lshort_bar), logicBar, "bar", logicWorld, false, id_bar0, true);
 
     auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
     att -> SetForceWireframe(true);
@@ -130,12 +130,12 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   {
     PrintMessage("Set bar");
 
-    auto solidBar = new G4Box("bar", .5*lx_bar, .5*ly_bar, .5*lz_bar);
+    auto solidBar = new G4Box("bar", .5*llong_bar, .5*lshort_bar, .5*lshort_bar);
     auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
     if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
     auto rotation = new G4RotationMatrix();
     rotation -> rotateY(-phi_bar);
-    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicBar, "bar", logicWorld, false, id_bar, true);
+    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicBar, "bar", logicWorld, false, id_bar0, true);
 
     auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
     att -> SetForceWireframe(true);
@@ -147,7 +147,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   {
     PrintMessage("Set wall");
 
-    auto solidWallSpace = new G4Box("wallSpace", .6*lx_bar, .6*lx_bar, 2.*lz_wall);
+    auto solidWallSpace = new G4Box("wallSpace", .6*llong_bar, .6*llong_bar, 2.*lz_wall);
     auto logicWallSpace = new G4LogicalVolume(solidWallSpace, matWallSpace, "wallSpace");
     auto rotation = new G4RotationMatrix();
     rotation -> rotateY(-phi_bar);
@@ -160,16 +160,18 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     }
 
     {
-      auto solidBar = new G4Box("bar", .5*lx_bar, .5*ly_bar, .5*lz_bar);
+      auto solidBar = new G4Box("bar", .5*llong_bar, .5*lshort_bar, .5*lshort_bar);
       auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
       if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
-      for (auto layer : {0,2,4,6})
-        for (auto pm : {-1,1})
-          for (auto ibar=0; ibar<25; ++ibar) {
-            auto oy_bar2 = .5*ly_bar+ibar*ly_bar;
-            auto oz_bar2 = lz_bar*layer;
-            new G4PVPlacement(0, G4ThreeVector(0,pm*oy_bar2,oz_bar2), logicBar, "bar", logicWallSpace, false, id_bar, true);
-          }
+      for (auto layer : {0,2,4,6}) {
+        auto olong_bar = lshort_bar*layer;
+        for (auto row=0; row<50; ++row) {
+          auto oshort_bar = row*lshort_bar - .5*llong_bar + .5*lshort_bar;
+          auto id_bar = GetBarID(layer, row);
+          G4cout << id_bar << G4endl;
+          new G4PVPlacement(0, G4ThreeVector(0,oshort_bar,olong_bar), logicBar, "bar", logicWallSpace, false, id_bar, true);
+        }
+      }
 
       auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
       att -> SetForceWireframe(true);
@@ -177,24 +179,24 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     }
 
     {
-      auto solidBar = new G4Box("bar", .5*ly_bar, .5*lx_bar, .5*lz_bar);
+      auto solidBar = new G4Box("bar", .5*lshort_bar, .5*llong_bar, .5*lshort_bar);
       auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
       if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
-      auto rotation = new G4RotationMatrix();
-      rotation -> rotateY(-phi_bar);
-      for (auto layer : {1,3,5,7})
-        for (auto pm : {-1,1})
-          for (auto ibar=0; ibar<25; ++ibar) {
-            auto oy_bar2 = .5*ly_bar+ibar*ly_bar;
-            auto oz_bar2 = lz_bar*layer;
-            new G4PVPlacement(rotation, G4ThreeVector(pm*oy_bar2,0,oz_bar2), logicBar, "bar", logicWallSpace, false, id_bar, true);
-          }
+
+      for (auto layer : {1,3,5,7}) {
+        auto olong_bar = lshort_bar*layer;
+        for (auto row=0; row<50; ++row) {
+          auto oshort_bar = row*lshort_bar - .5*llong_bar + .5*lshort_bar;
+          auto id_bar = GetBarID(layer, row);
+          G4cout << id_bar << G4endl;
+          new G4PVPlacement(0, G4ThreeVector(oshort_bar,0,olong_bar), logicBar, "bar", logicWallSpace, false, id_bar, true);
+        }
+      }
 
       auto att = new G4VisAttributes(G4Colour(G4Colour::Gray()));
       att -> SetForceWireframe(true);
       logicBar -> SetVisAttributes(att);
     }
-
   }
 
   if (fCreateField)
@@ -219,4 +221,31 @@ void TDetectorConstruction::ConstructField()
 void TDetectorConstruction::PrintMessage(const char *message, const char *value)
 {
   G4cout << "  [TDetectorConstruction] " << message << value << G4endl;
+}
+
+int TDetectorConstruction::GetBarID(int layer, int row) { return 2000 + layer * 100 + row; }
+
+int TDetectorConstruction::GetRow(int id)
+{
+  if (id < 2000)
+    return -1;
+  id = id - 2000;
+  auto row = id - (id/100)*100;
+  return row;
+}
+
+int TDetectorConstruction::GetLayer(int id)
+{
+  if (id < 2000)
+    return -1;
+  id = id - 2000;
+  auto layer = id/100;
+  return layer;
+}
+
+void TDetectorConstruction::SetFieldName(G4String name)
+{
+  if (!name.isNull())
+    fCreateField = true;
+  fFieldMapFileName = name;
 }

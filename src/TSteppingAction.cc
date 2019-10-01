@@ -10,35 +10,37 @@ TSteppingAction::TSteppingAction(TEventAction *eventAction)
 void TSteppingAction::UserSteppingAction(const G4Step* step)
 {
   auto preStep = step -> GetPreStepPoint();
-  auto postStep = step -> GetPostStepPoint();
+  auto pstStep = step -> GetPostStepPoint();
 
-  auto preID = preStep -> GetPhysicalVolume() -> GetCopyNo();
-  if (preID == 2)
-    fEventAction -> AddEnergyDeposit(step -> GetTotalEnergyDeposit());
+  auto preCopyNo = preStep -> GetPhysicalVolume() -> GetCopyNo();
+  if (preCopyNo >= 2000)
+    fEventAction -> AddEnergyDeposit(step -> GetTotalEnergyDeposit(), preCopyNo);
 
-  if (step -> GetTrack() -> GetTrackID() != 1)
+  if (pstStep -> GetStepStatus() == fWorldBoundary)
     return;
 
-  if (step -> GetPostStepPoint() -> GetStepStatus() == fWorldBoundary)
-    return;
+  auto pstCopyNo = pstStep -> GetPhysicalVolume() -> GetCopyNo();
 
-  auto postID = postStep -> GetPhysicalVolume() -> GetCopyNo();
-
-  if (preID == 0 && postID == 2)
+  if (step -> GetTrack() -> GetTrackID() == 1)
   {
-    fEventAction -> SetPoint1(
-        postStep -> GetKineticEnergy(),
-        postStep -> GetMomentum(),
-        postStep -> GetGlobalTime()
-        );
-  }
+    if (preCopyNo == 0 && pstCopyNo >= 2000)
+    {
+      fEventAction -> SetPoint1(
+          pstStep -> GetKineticEnergy(),
+          pstStep -> GetMomentum(),
+          pstStep -> GetGlobalTime(),
+          pstStep -> GetPosition()
+          );
+    }
 
-  if (preID == 2 && postID == 0)
-  {
-    fEventAction -> SetPoint2(
-        postStep -> GetKineticEnergy(),
-        postStep -> GetMomentum(),
-        postStep -> GetGlobalTime()
-        );
+    if (preCopyNo >= 2000 && pstCopyNo == 0)
+    {
+      fEventAction -> SetPoint2(
+          pstStep -> GetKineticEnergy(),
+          pstStep -> GetMomentum(),
+          pstStep -> GetGlobalTime(),
+          pstStep -> GetPosition()
+          );
+    }
   }
 }

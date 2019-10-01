@@ -10,6 +10,9 @@
 
 class TRunAction : public G4UserRunAction
 {
+  private:
+    G4RootAnalysisManager* fAnalysisManager = nullptr;
+
   public:
     TRunAction();
     virtual ~TRunAction();
@@ -25,10 +28,11 @@ class TRunAction : public G4UserRunAction
                    G4ThreeVector p1,
                    G4ThreeVector p2,
                    double t1,
-                   double t2);
-
-  private:
-    G4RootAnalysisManager* fAnalysisManager = nullptr;
+                   double t2,
+                   G4ThreeVector pos1,
+                   G4ThreeVector pos2,
+                   double nlayers,
+                   double nbars);
 };
 
 #endif

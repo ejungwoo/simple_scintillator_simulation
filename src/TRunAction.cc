@@ -8,12 +8,19 @@ TRunAction::TRunAction()
 
   fAnalysisManager -> CreateNtuple("event", "event");
 
-  fAnalysisManager -> CreateNtupleDColumn("ebar");
+  fAnalysisManager -> CreateNtupleDColumn("edep");
+  fAnalysisManager -> CreateNtupleDColumn("nlayers");
+  fAnalysisManager -> CreateNtupleDColumn("nbars");
+
   fAnalysisManager -> CreateNtupleDColumn("kine0");
   fAnalysisManager -> CreateNtupleDColumn("phi0");
+  fAnalysisManager -> CreateNtupleDColumn("theta0");
+
   fAnalysisManager -> CreateNtupleDColumn("kine1");
-  fAnalysisManager -> CreateNtupleDColumn("kine2");
   fAnalysisManager -> CreateNtupleDColumn("tof1");
+  fAnalysisManager -> CreateNtupleDColumn("x1");
+  fAnalysisManager -> CreateNtupleDColumn("y1");
+
   fAnalysisManager -> FinishNtuple();
 }
 
@@ -41,14 +48,23 @@ void TRunAction::FillEvent(double e,
                            G4ThreeVector p1,
                            G4ThreeVector p2,
                            double t1,
-                           double t2)
+                           double t2,
+                           G4ThreeVector pos1,
+                           G4ThreeVector pos2,
+                           double nlayers,
+                           double nbars)
 {
-  fAnalysisManager -> FillNtupleDColumn(0, e);
-  fAnalysisManager -> FillNtupleDColumn(1, k0);
-  fAnalysisManager -> FillNtupleDColumn(2, std::atan2(p0.z(),p0.x()));
-  fAnalysisManager -> FillNtupleDColumn(3, k1);
-  fAnalysisManager -> FillNtupleDColumn(4, k2);
-  fAnalysisManager -> FillNtupleDColumn(5, t1);
+  int countColumn = 0;
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, e);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, nlayers);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, nbars);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, k0);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(p0.z(),p0.x()));
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(sqrt(p0.x()*p0.x()+p0.z()*p0.z()),p0.y()));
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, k1);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, t2);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, pos1.x());
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, pos1.y());
 
   fAnalysisManager -> AddNtupleRow();
 }

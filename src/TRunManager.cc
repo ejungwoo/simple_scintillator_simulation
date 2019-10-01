@@ -79,6 +79,7 @@ void TRunManager::BuildInitsAndActions()
   SetUserAction(runAction);
 
   auto eventAction = new TEventAction(runAction);
+  eventAction -> SetDetectorConstruction(detectorConstruction);
   SetUserAction(eventAction);
 
   auto trackingAction = new TTrackingAction(eventAction);

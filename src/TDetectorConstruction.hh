@@ -44,11 +44,11 @@ class TDetectorConstruction : public G4VUserDetectorConstruction
     void SetBarStepLimits(G4double limit_mm) { fBarStepLimit = limit_mm; }
 
     void SetNoField() { fCreateField = false; }
-    void SetFieldName(G4String name) {
-      if (!name.isNull())
-        fCreateField = true;
-      fFieldMapFileName = name;
-    }
+    void SetFieldName(G4String name);
+
+    int GetBarID(int layer, int row);
+    int GetRow(int id);
+    int GetLayer(int id);
 };
 
 #endif
