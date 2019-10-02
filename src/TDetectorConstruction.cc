@@ -51,7 +51,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   auto id_world = 0;
   auto id_tpc = 1;
   auto id_bar0 = GetBarID(0,0);
-  auto id_wallspace = id_world;
+  auto id_wallspace = 3;
 
 
 
@@ -151,7 +151,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     auto logicWallSpace = new G4LogicalVolume(solidWallSpace, matWallSpace, "wallSpace");
     auto rotation = new G4RotationMatrix();
     rotation -> rotateY(-phi_bar);
-    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicWallSpace, "bar", logicWorld, false, id_wallspace, true);
+    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicWallSpace, "wallspace", logicWorld, false, id_wallspace, true);
 
     {
       auto att = new G4VisAttributes(G4Colour(G4Colour::Magenta()));
@@ -168,7 +168,6 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
         for (auto row=0; row<50; ++row) {
           auto oshort_bar = row*lshort_bar - .5*llong_bar + .5*lshort_bar;
           auto id_bar = GetBarID(layer, row);
-          G4cout << id_bar << G4endl;
           new G4PVPlacement(0, G4ThreeVector(0,oshort_bar,olong_bar), logicBar, "bar", logicWallSpace, false, id_bar, true);
         }
       }
@@ -188,7 +187,6 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
         for (auto row=0; row<50; ++row) {
           auto oshort_bar = row*lshort_bar - .5*llong_bar + .5*lshort_bar;
           auto id_bar = GetBarID(layer, row);
-          G4cout << id_bar << G4endl;
           new G4PVPlacement(0, G4ThreeVector(oshort_bar,0,olong_bar), logicBar, "bar", logicWallSpace, false, id_bar, true);
         }
       }

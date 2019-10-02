@@ -23,7 +23,7 @@ void TSteppingAction::UserSteppingAction(const G4Step* step)
 
   if (step -> GetTrack() -> GetTrackID() == 1)
   {
-    if (preCopyNo == 0 && pstCopyNo >= 2000)
+    if (preCopyNo == 3 && pstCopyNo >= 2000)
     {
       fEventAction -> SetPoint1(
           pstStep -> GetKineticEnergy(),
@@ -33,7 +33,7 @@ void TSteppingAction::UserSteppingAction(const G4Step* step)
           );
     }
 
-    if (preCopyNo >= 2000 && pstCopyNo == 0)
+    if (preCopyNo >= 2000 && pstCopyNo == 3)
     {
       fEventAction -> SetPoint2(
           pstStep -> GetKineticEnergy(),

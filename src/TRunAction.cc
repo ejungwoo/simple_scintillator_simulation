@@ -62,7 +62,7 @@ void TRunAction::FillEvent(double e,
   fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(p0.z(),p0.x()));
   fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(sqrt(p0.x()*p0.x()+p0.z()*p0.z()),p0.y()));
   fAnalysisManager -> FillNtupleDColumn(countColumn++, k1);
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, t2);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, t1);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, pos1.x());
   fAnalysisManager -> FillNtupleDColumn(countColumn++, pos1.y());
 
