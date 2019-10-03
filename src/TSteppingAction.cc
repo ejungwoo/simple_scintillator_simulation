@@ -13,8 +13,12 @@ void TSteppingAction::UserSteppingAction(const G4Step* step)
   auto pstStep = step -> GetPostStepPoint();
 
   auto preCopyNo = preStep -> GetPhysicalVolume() -> GetCopyNo();
-  if (preCopyNo >= 2000)
-    fEventAction -> AddEnergyDeposit(step -> GetTotalEnergyDeposit(), preCopyNo);
+  if (preCopyNo >= 2000) {
+    fEventAction -> AddEnergyDeposit(
+        step -> GetTotalEnergyDeposit(),
+        preCopyNo,
+        step -> GetTrack() -> GetTrackID());
+  }
 
   if (pstStep -> GetStepStatus() == fWorldBoundary)
     return;

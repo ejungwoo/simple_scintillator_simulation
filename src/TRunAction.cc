@@ -8,7 +8,8 @@ TRunAction::TRunAction()
 
   fAnalysisManager -> CreateNtuple("event", "event");
 
-  fAnalysisManager -> CreateNtupleDColumn("edep");
+  fAnalysisManager -> CreateNtupleDColumn("edep_primary");
+  fAnalysisManager -> CreateNtupleDColumn("edep_secondary");
   fAnalysisManager -> CreateNtupleDColumn("nlayers");
   fAnalysisManager -> CreateNtupleDColumn("nbars");
 
@@ -40,7 +41,8 @@ void TRunAction::EndOfRunAction(const G4Run*)
   fAnalysisManager -> CloseFile();
 }
 
-void TRunAction::FillEvent(double e,
+void TRunAction::FillEvent(double ep,
+                           double es,
                            double k0,
                            double k1,
                            double k2,
@@ -55,11 +57,12 @@ void TRunAction::FillEvent(double e,
                            double nbars)
 {
   int countColumn = 0;
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, e);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, ep);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, es);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, nlayers);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, nbars);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, k0);
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(p0.z(),p0.x()));
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(p0.x(),p0.z()));
   fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(sqrt(p0.x()*p0.x()+p0.z()*p0.z()),p0.y()));
   fAnalysisManager -> FillNtupleDColumn(countColumn++, k1);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, t1);

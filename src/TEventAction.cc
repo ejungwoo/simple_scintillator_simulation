@@ -8,7 +8,8 @@ TEventAction::TEventAction(TRunAction *runAction)
 
 void TEventAction::BeginOfEventAction(const G4Event*)
 {
-  fEdepSum = 0.;
+  fEdepSumPrimary = 0.;
+  fEdepSumSecondary = 0.;
 
   fKinEnergy0 = -1.;
   fKinEnergy1 = -1.;
@@ -43,7 +44,8 @@ void TEventAction::EndOfEventAction(const G4Event*)
   auto local1 = fWallDetector -> GlobalToLocalPos(fPosition1);
   auto local2 = fWallDetector -> GlobalToLocalPos(fPosition2);
 
-  fRunAction -> FillEvent( fEdepSum,
+  fRunAction -> FillEvent(
+      fEdepSumPrimary, fEdepSumSecondary,
       fKinEnergy0, fKinEnergy1, fKinEnergy2,
       fMomentum0, fMomentum1, fMomentum2,
       fTime1, fTime2,
@@ -52,9 +54,12 @@ void TEventAction::EndOfEventAction(const G4Event*)
       );
 }
 
-void TEventAction::AddEnergyDeposit(double edep, int copyNo)
+void TEventAction::AddEnergyDeposit(double edep, int copyNo, int trackID)
 {
-  fEdepSum += edep;
+  if (trackID == 1)
+    fEdepSumPrimary += edep;
+  else
+    fEdepSumSecondary += edep;
 
   auto layer = fDetectorConstruction -> GetLayer(copyNo);
   auto row = fDetectorConstruction -> GetRow(copyNo);

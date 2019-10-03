@@ -16,7 +16,8 @@ class TEventAction : public G4UserEventAction
     TDetectorConstruction *fDetectorConstruction;
     TWallDetector *fWallDetector;
 
-    double fEdepSum;
+    double fEdepSumPrimary;
+    double fEdepSumSecondary;
     double fKinEnergy0;
     double fKinEnergy1;
     double fKinEnergy2;
@@ -45,7 +46,7 @@ class TEventAction : public G4UserEventAction
     virtual void BeginOfEventAction(const G4Event *);
     virtual void EndOfEventAction(const G4Event *);
 
-    void AddEnergyDeposit(double edep, int copyNo);
+    void AddEnergyDeposit(double edep, int copyNo, int trackID);
     void SetPoint0(double kine, G4ThreeVector momentum);
     void SetPoint1(double kine, G4ThreeVector momentum, double time, G4ThreeVector pos);
     void SetPoint2(double kine, G4ThreeVector momentum, double time, G4ThreeVector pos);
