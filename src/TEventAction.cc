@@ -106,7 +106,3 @@ void TEventAction::SetPoint2(double kine, G4ThreeVector momentum, double time, G
   }
 }
 
-void TEventAction::SetDetectorConstruction(TDetectorConstruction *detectorConstruction)
-{
-  fDetectorConstruction = detectorConstruction;
-}

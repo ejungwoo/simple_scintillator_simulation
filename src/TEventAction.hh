@@ -12,9 +12,9 @@
 class TEventAction : public G4UserEventAction
 {
   private:
-    TRunAction* fRunAction;
-    TDetectorConstruction *fDetectorConstruction;
-    TWallDetector *fWallDetector;
+    TRunAction* fRunAction = nullptr;
+    TDetectorConstruction *fDetectorConstruction = nullptr;
+    TWallDetector *fWallDetector = nullptr;
 
     double fEdepSumPrimary;
     double fEdepSumSecondary;
@@ -51,7 +51,8 @@ class TEventAction : public G4UserEventAction
     void SetPoint1(double kine, G4ThreeVector momentum, double time, G4ThreeVector pos);
     void SetPoint2(double kine, G4ThreeVector momentum, double time, G4ThreeVector pos);
 
-    void SetDetectorConstruction(TDetectorConstruction *detectorConstruction);
+    void SetDetectorConstruction(TDetectorConstruction *dc) { fDetectorConstruction = dc; }
+    void SetWallDetector(TWallDetector *wd) { fWallDetector = wd; }
 };
 
 #endif

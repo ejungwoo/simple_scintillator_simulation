@@ -20,6 +20,9 @@ TMessenger::TMessenger()
   fCmdParticlePhi2    = new G4UIcmdWithADoubleAndUnit("/my/pga/phi2"     ,this);
   fCmdParticleTheta1  = new G4UIcmdWithADoubleAndUnit("/my/pga/theta1"   ,this);
   fCmdParticleTheta2  = new G4UIcmdWithADoubleAndUnit("/my/pga/theta2"   ,this);
+
+  fCmdDistTarget = new G4UIcmdWithADoubleAndUnit("/my/init/dist" ,this);
+  fCmdRotationY  = new G4UIcmdWithADoubleAndUnit("/my/init/roty" ,this);
 }
 
 TMessenger::~TMessenger()
@@ -60,4 +63,7 @@ void TMessenger::SetNewValue(G4UIcommand *command, G4String value)
   else if (command == fCmdParticlePhi2)    fPrimaryGeneratorAction -> SetParticlePhi2( fCmdParticlePhi2 -> GetNewDoubleValue(value) );
   else if (command == fCmdParticleTheta1)  fPrimaryGeneratorAction -> SetParticleTheta1( fCmdParticleTheta1 -> GetNewDoubleValue(value) );
   else if (command == fCmdParticleTheta2)  fPrimaryGeneratorAction -> SetParticleTheta2( fCmdParticleTheta2 -> GetNewDoubleValue(value) );
+
+  else if (command == fCmdDistTarget) fWallDetector -> SetDistanceFromTheTarget( fCmdDistTarget -> GetNewDoubleValue(value) );
+  else if (command == fCmdRotationY)  fWallDetector -> SetRotationYGlobal( fCmdRotationY -> GetNewDoubleValue(value) );
 }

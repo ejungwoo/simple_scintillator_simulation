@@ -3,16 +3,16 @@
 TVector3 TWallDetector::LocalToGlobalPos(TVector3 localPos)
 {
   TVector3 globalPos = localPos;
-  globalPos.RotateY( fRotYWall_deg * TMath::DegToRad() );
-  globalPos += TVector3(fOffxWall, fOffyWall, fOffzWall);
+  globalPos.RotateY( fRotationY );
+  globalPos += GetWallOffset();
   return globalPos;
 }
 
 TVector3 TWallDetector::GlobalToLocalPos(TVector3 globalPos)
 {
   TVector3 localPos = globalPos;
-  localPos -= TVector3(fOffxWall, fOffyWall, fOffzWall);
-  localPos.RotateY( -fRotYWall_deg * TMath::DegToRad() );
+  localPos -= GetWallOffset();
+  localPos.RotateY( -fRotationY );
   return localPos;
 }
 
@@ -26,4 +26,9 @@ G4ThreeVector TWallDetector::GlobalToLocalPos(G4ThreeVector globalPos)
 {
   auto pos = GlobalToLocalPos(TVector3(globalPos.x(),globalPos.y(),globalPos.z()));
   return G4ThreeVector(pos.x(),pos.y(),pos.z());
+}
+
+TVector3 TWallDetector::GetWallOffset() const
+{
+  return TVector3(fDistTarget*sin(fRotationY), fYTarget, fDistTarget*cos(fRotationY)+fZTarget);
 }

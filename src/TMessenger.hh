@@ -11,6 +11,7 @@
 
 #include "TDetectorConstruction.hh"
 #include "TPrimaryGeneratorAction.hh"
+#include "TWallDetector.hh"
 
 /**
  * - /my/init/detector/tpc
@@ -31,10 +32,12 @@ class TMessenger : public G4UImessenger
 
     void SetDetectorConstruction(TDetectorConstruction *dc) { fDetectorConstruction = dc; }
     void SetPrimaryGeneratorAction(TPrimaryGeneratorAction *pga) { fPrimaryGeneratorAction = pga; }
+    void SetWallDetector(TWallDetector *wd) { fWallDetector = wd; }
 
   private:
     TDetectorConstruction *fDetectorConstruction = nullptr;
     TPrimaryGeneratorAction *fPrimaryGeneratorAction = nullptr;
+    TWallDetector *fWallDetector = nullptr;
 
     G4UIcmdWithAString *fCmdFieldFileName;
     G4UIcmdWithoutParameter *fCmdBuildTPC;
@@ -52,6 +55,9 @@ class TMessenger : public G4UImessenger
     G4UIcmdWithADoubleAndUnit *fCmdParticlePhi2;
     G4UIcmdWithADoubleAndUnit *fCmdParticleTheta1;
     G4UIcmdWithADoubleAndUnit *fCmdParticleTheta2;
+
+    G4UIcmdWithADoubleAndUnit *fCmdDistTarget;
+    G4UIcmdWithADoubleAndUnit *fCmdRotationY;
 };
 
 #endif

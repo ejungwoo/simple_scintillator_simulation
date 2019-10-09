@@ -45,23 +45,39 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   auto matBar = nist -> FindOrBuildMaterial("G4_XYLENE");
   auto matWallSpace = matAir;
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+  auto idWorld = 0;
+  auto idTpc = 1;
+  auto idBar0 = GetBarID(0,0);
+  auto idWallSpace = 3;
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  auto id_world = 0;
-  auto id_tpc = 1;
-  auto id_bar0 = GetBarID(0,0);
-  auto id_wallspace = 3;
+  auto xLengthWorld = 2*10000.*mm;
+  auto yLengthWorld = 4* 1000.*mm;
+  auto zLengthWorld = 2*10000.*mm;
 
+  auto xLengthTpc =  864.*mm;
+  auto yLengthTpc =  530.*mm;
+  auto zLengthTpc = 1344.*mm;
+  auto yOffsetTpc = -yLengthTpc/2.;
+  auto zOffsetTpc =  zLengthTpc/2.;
 
+  auto widthBar = fWallDetector -> GetBarWidth();
+  auto lengthBar = fWallDetector -> GetBarLength();
+  auto offsetWall = fWallDetector -> GetWallOffset();
+  auto xOffsetWall = offsetWall.x();
+  auto yOffsetWall = offsetWall.y();
+  auto zOffsetWall = offsetWall.z();
+  auto phiWallGlobal = fWallDetector -> GetRotationYGlobal();
+  auto zThicknessWall = fWallDetector -> GetWallZThickness();
 
-  auto lx_world = 2*10000.*mm;
-  auto ly_world = 4* 1000.*mm;
-  auto lz_world = 2*10000.*mm;
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  auto solidWorld = new G4Box("World", lx_world/2., ly_world/2., lz_world/2.);
+  auto solidWorld = new G4Box("World", xLengthWorld/2., yLengthWorld/2., zLengthWorld/2.);
   auto logicWorld = new G4LogicalVolume(solidWorld, matAir, "World");
-  auto physiWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, id_world, true);
+  auto physiWorld = new G4PVPlacement(0, G4ThreeVector(), logicWorld, "World", 0, false, idWorld, true);
 
   {
     auto att = new G4VisAttributes();
@@ -69,89 +85,69 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     logicWorld -> SetVisAttributes(att);
   }
 
-
-
-  auto oz_target = -13.24*mm;
-  auto oy_target = -205.*mm;
-
-  auto lx_tpc =  864.*mm;
-  auto ly_tpc =  530.*mm;
-  auto lz_tpc = 1344.*mm;
-  auto oy_tpc = -ly_tpc/2.;
-  auto oz_tpc =  lz_tpc/2. - oz_target;
-
-  auto lz_wall=  400.*mm;
-
-  auto llong_bar = 2500.*mm;
-  auto lshort_bar = 50.*mm;
-
-  auto dist_bar = 9093.85*mm;
-  auto phi_bar = 29.579*CLHEP::deg;
-
-  auto ox_bar = dist_bar * sin( phi_bar );
-  auto oy_bar = oy_target;
-  auto oz_bar = dist_bar * cos( phi_bar ) + oz_target;
-
-
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   if (fSetBuildBar0)
   {
     PrintMessage("Set bar at target origin");
 
-    auto solidBar = new G4Box("bar", .5*llong_bar, .5*lshort_bar, .5*lshort_bar);
+    auto solidBar = new G4Box("bar", .5*lengthBar, .5*widthBar, .5*widthBar);
     auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
     if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
     auto rotation = new G4RotationMatrix();
-    rotation -> rotateY(-phi_bar);
-    new G4PVPlacement(rotation, G4ThreeVector(0,oy_bar,.5*lshort_bar), logicBar, "bar", logicWorld, false, id_bar0, true);
+    rotation -> rotateY(-phiWallGlobal);
+    new G4PVPlacement(rotation, G4ThreeVector(0,yOffsetWall,.5*widthBar), logicBar, "bar", logicWorld, false, idBar0, true);
 
     auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
     att -> SetForceWireframe(true);
     logicBar -> SetVisAttributes(att);
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   if (fSetBuildTPC)
   {
     PrintMessage("Set TPC");
 
-    auto solidTPC = new G4Box("TPC", .5*lx_tpc, .5*ly_tpc, .5*lz_tpc);
+    auto solidTPC = new G4Box("TPC", .5*xLengthTpc, .5*yLengthTpc, .5*zLengthTpc);
     auto logicTPC = new G4LogicalVolume(solidTPC, matGas, "TPC");
     if (fTPCStepLimit>0) logicTPC -> SetUserLimits(new G4UserLimits(fTPCStepLimit*mm));
-    new G4PVPlacement(0, G4ThreeVector(0,oy_tpc,oz_tpc), logicTPC, "TPC", logicWorld, false, id_tpc, true);
+    new G4PVPlacement(0, G4ThreeVector(0,yOffsetTpc,zOffsetTpc), logicTPC, "TPC", logicWorld, false, idTpc, true);
 
     auto att = new G4VisAttributes(G4Colour(G4Colour::Blue()));
     att -> SetForceWireframe(true);
     logicTPC -> SetVisAttributes(att);
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   if (fSetBuildBar)
   {
     PrintMessage("Set bar");
 
-    auto solidBar = new G4Box("bar", .5*llong_bar, .5*lshort_bar, .5*lshort_bar);
+    auto solidBar = new G4Box("bar", .5*lengthBar, .5*widthBar, .5*widthBar);
     auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
     if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
     auto rotation = new G4RotationMatrix();
-    rotation -> rotateY(-phi_bar);
-    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicBar, "bar", logicWorld, false, id_bar0, true);
+    rotation -> rotateY(-phiWallGlobal);
+    new G4PVPlacement(rotation, G4ThreeVector(xOffsetWall,yOffsetWall,zOffsetWall), logicBar, "bar", logicWorld, false, idBar0, true);
 
     auto att = new G4VisAttributes(G4Colour(G4Colour::Black()));
     att -> SetForceWireframe(true);
     logicBar -> SetVisAttributes(att);
   }
 
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   if (fSetBuildWall)
   {
     PrintMessage("Set wall");
 
-    auto solidWallSpace = new G4Box("wallSpace", .6*llong_bar, .6*llong_bar, 2.*lz_wall);
+    auto solidWallSpace = new G4Box("wallSpace", .6*lengthBar, .6*lengthBar, 2.*zThicknessWall);
     auto logicWallSpace = new G4LogicalVolume(solidWallSpace, matWallSpace, "wallSpace");
     auto rotation = new G4RotationMatrix();
-    rotation -> rotateY(-phi_bar);
-    new G4PVPlacement(rotation, G4ThreeVector(ox_bar,oy_bar,oz_bar), logicWallSpace, "wallspace", logicWorld, false, id_wallspace, true);
+    rotation -> rotateY(-phiWallGlobal);
+    new G4PVPlacement(rotation, G4ThreeVector(xOffsetWall,yOffsetWall,zOffsetWall), logicWallSpace, "wallspace", logicWorld, false, idWallSpace, true);
 
     {
       auto att = new G4VisAttributes(G4Colour(G4Colour::Magenta()));
@@ -160,15 +156,15 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     }
 
     {
-      auto solidBar = new G4Box("bar", .5*llong_bar, .5*lshort_bar, .5*lshort_bar);
+      auto solidBar = new G4Box("bar", .5*lengthBar, .5*widthBar, .5*widthBar);
       auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
       if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
       for (auto layer : {0,2,4,6}) {
-        auto olong_bar = lshort_bar*layer;
+        auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
-          auto oshort_bar = row*lshort_bar - .5*llong_bar + .5*lshort_bar;
-          auto id_bar = GetBarID(layer, row);
-          new G4PVPlacement(0, G4ThreeVector(0,oshort_bar,olong_bar), logicBar, "bar", logicWallSpace, false, id_bar, true);
+          auto yOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
+          auto idBar = GetBarID(layer, row);
+          new G4PVPlacement(0, G4ThreeVector(0,yOffsetBarLocal,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
         }
       }
 
@@ -178,16 +174,16 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
     }
 
     {
-      auto solidBar = new G4Box("bar", .5*lshort_bar, .5*llong_bar, .5*lshort_bar);
+      auto solidBar = new G4Box("bar", .5*widthBar, .5*lengthBar, .5*widthBar);
       auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
       if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
 
       for (auto layer : {1,3,5,7}) {
-        auto olong_bar = lshort_bar*layer;
+        auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
-          auto oshort_bar = row*lshort_bar - .5*llong_bar + .5*lshort_bar;
-          auto id_bar = GetBarID(layer, row);
-          new G4PVPlacement(0, G4ThreeVector(oshort_bar,0,olong_bar), logicBar, "bar", logicWallSpace, false, id_bar, true);
+          auto xOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
+          auto idBar = GetBarID(layer, row);
+          new G4PVPlacement(0, G4ThreeVector(xOffsetBarLocal,0,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
         }
       }
 

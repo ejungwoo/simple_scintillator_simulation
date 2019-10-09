@@ -69,7 +69,10 @@ void TRunManager::BuildInitsAndActions()
     SetUserInitialization(myPhysicsList);
   }
 
+  auto wallDetector = new TWallDetector();
+
   auto detectorConstruction = new TDetectorConstruction();
+  detectorConstruction -> SetWallDetector(wallDetector);
   SetUserInitialization(detectorConstruction);
 
   auto primaryGenerator = new TPrimaryGeneratorAction();
@@ -80,6 +83,7 @@ void TRunManager::BuildInitsAndActions()
 
   auto eventAction = new TEventAction(runAction);
   eventAction -> SetDetectorConstruction(detectorConstruction);
+  eventAction -> SetWallDetector(wallDetector);
   SetUserAction(eventAction);
 
   auto trackingAction = new TTrackingAction(eventAction);
@@ -91,6 +95,7 @@ void TRunManager::BuildInitsAndActions()
   fMessenger = new TMessenger;
   fMessenger -> SetDetectorConstruction(detectorConstruction);
   fMessenger -> SetPrimaryGeneratorAction(primaryGenerator);
+  fMessenger -> SetWallDetector(wallDetector);
 }
 
 void TRunManager::InitializeGeometry()

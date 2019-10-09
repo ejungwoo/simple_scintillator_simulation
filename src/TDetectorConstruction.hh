@@ -4,6 +4,8 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
+#include "TWallDetector.hh"
+
 class G4VPhysicalVolume;
 
 class TDetectorConstruction : public G4VUserDetectorConstruction
@@ -19,6 +21,8 @@ class TDetectorConstruction : public G4VUserDetectorConstruction
 
     bool fCreateField = false;
     G4String fFieldMapFileName = "data/field.root";
+
+    TWallDetector *fWallDetector = nullptr;
 
   private:
     void PrintMessage(const char *message, const char *value="");
@@ -49,6 +53,8 @@ class TDetectorConstruction : public G4VUserDetectorConstruction
     int GetBarID(int layer, int row);
     int GetRow(int id);
     int GetLayer(int id);
+
+    void SetWallDetector(TWallDetector *wd) { fWallDetector = wd; }
 };
 
 #endif
