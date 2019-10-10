@@ -1,6 +1,6 @@
 void make_proton_searching_crosssection_uniform_angle()
 {
-  bool isVisMac = true;
+  bool isVisMac = false;
 
   auto numEvents = 1000000;
   if (isVisMac)
@@ -13,9 +13,9 @@ void make_proton_searching_crosssection_uniform_angle()
   TString particleName = "proton";
   TString arxivName = TString("arxiv")+"_"+runName+"_"+particleName;
 
-  bool setBar = true;
-  bool setBar0 = true;
-  bool setWall = true;
+  bool setBar = 1;
+  bool setBar0 = 0;
+  bool setWall = 0;
 
   TVector3 vpos(0,-205,-13.2);
 

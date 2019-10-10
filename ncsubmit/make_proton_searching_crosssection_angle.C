@@ -8,8 +8,8 @@ void make_proton_searching_crosssection_angle()
   TString arxivName = TString("arxiv")+"_"+runName+"_"+particleName;
 
   bool setBar = true;
-  bool setBar0 = true;
-  bool setWall = true;
+  bool setBar0 = false;
+  bool setWall = false;
 
   TVector3 vpos(0,-205,-13.2);
 
