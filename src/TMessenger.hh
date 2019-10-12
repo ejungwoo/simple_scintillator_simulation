@@ -44,6 +44,7 @@ class TMessenger : public G4UImessenger
     G4UIcmdWithoutParameter *fCmdBuildBar;
     G4UIcmdWithoutParameter *fCmdBuildBar0;
     G4UIcmdWithoutParameter *fCmsBuildWall;
+    G4UIcmdWithoutParameter *fCmsBuildVeto;
 
     G4UIcmdWithoutParameter *fCmsSetParticleGun;
     G4UIcmdWithAnInteger *fCmdParticlePDG;

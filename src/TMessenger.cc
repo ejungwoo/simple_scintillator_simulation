@@ -9,6 +9,7 @@ TMessenger::TMessenger()
   fCmdBuildBar  = new G4UIcmdWithoutParameter("/my/init/detector/bar"  ,this);
   fCmdBuildBar0 = new G4UIcmdWithoutParameter("/my/init/detector/bar0" ,this);
   fCmsBuildWall = new G4UIcmdWithoutParameter("/my/init/detector/wall" ,this);
+  fCmsBuildVeto = new G4UIcmdWithoutParameter("/my/init/detector/veto" ,this);
 
   fCmsSetParticleGun  = new G4UIcmdWithoutParameter("/my/pga/gun" ,this);
   fCmdParticlePDG     = new G4UIcmdWithAnInteger("/my/pga/pdg"    ,this);
@@ -32,6 +33,7 @@ TMessenger::~TMessenger()
   delete fCmdBuildBar;
   delete fCmdBuildBar0;
   delete fCmsBuildWall;
+  delete fCmsBuildVeto;
 
   delete fCmsSetParticleGun;
   delete fCmdParticlePDG;
@@ -52,6 +54,7 @@ void TMessenger::SetNewValue(G4UIcommand *command, G4String value)
   else if (command == fCmdBuildBar)  fDetectorConstruction -> SetBuildBar();
   else if (command == fCmdBuildBar0) fDetectorConstruction -> SetBuildBar0();
   else if (command == fCmsBuildWall) fDetectorConstruction -> SetBuildWall();
+  else if (command == fCmsBuildVeto) fDetectorConstruction -> SetBuildVeto();
 
   else if (command == fCmsSetParticleGun)  fPrimaryGeneratorAction -> SetParticleGun();
   else if (command == fCmdParticlePDG)     fPrimaryGeneratorAction -> SetParticle( fCmdParticlePDG -> GetNewIntValue(value) );

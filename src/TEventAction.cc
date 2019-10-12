@@ -37,6 +37,8 @@ void TEventAction::BeginOfEventAction(const G4Event*)
   for (auto layer=0; layer<8; ++layer)
     for (auto row=0; row<50; ++row)
       fIsActiveBar[layer][row] = 0;
+
+  fEdepVeto = 0.;
 }
 
 void TEventAction::EndOfEventAction(const G4Event*)
@@ -50,8 +52,8 @@ void TEventAction::EndOfEventAction(const G4Event*)
       fMomentum0, fMomentum1, fMomentum2,
       fTime1, fTime2,
       local1, local2,
-      fCountActiveLayer, fCountActiveBar
-      );
+      fCountActiveLayer, fCountActiveBar,
+      fEdepVeto);
 }
 
 void TEventAction::AddEnergyDeposit(double edep, int copyNo, int trackID)
@@ -61,6 +63,10 @@ void TEventAction::AddEnergyDeposit(double edep, int copyNo, int trackID)
   else
     fEdepSumSecondary += edep;
 
+  if (copyNo >= 3000)
+    fEdepVeto += edep;
+
+  /*
   auto layer = fDetectorConstruction -> GetLayer(copyNo);
   auto row = fDetectorConstruction -> GetRow(copyNo);
 
@@ -73,6 +79,7 @@ void TEventAction::AddEnergyDeposit(double edep, int copyNo, int trackID)
     fIsActiveBar[layer][row] = 1;
     fCountActiveBar++;
   }
+  */
 }
 
 void TEventAction::SetPoint0(double kine, G4ThreeVector momentum)

@@ -15,6 +15,7 @@ class TDetectorConstruction : public G4VUserDetectorConstruction
     bool fSetBuildBar  = false;
     bool fSetBuildBar0 = true;
     bool fSetBuildWall = false;
+    bool fSetBuildVeto = false;
 
     double fTPCStepLimit = -1; ///< mm
     double fBarStepLimit = -1; ///< mm
@@ -43,16 +44,13 @@ class TDetectorConstruction : public G4VUserDetectorConstruction
     void SetBuildBar()  { Clear(); fSetBuildBar  = true; }
     void SetBuildBar0() { Clear(); fSetBuildBar0 = true; }
     void SetBuildWall() { Clear(); fSetBuildWall = true; }
+    void SetBuildVeto() { fSetBuildVeto = true; }
 
     void SetTPCStepLimits(G4double limit_mm) { fTPCStepLimit = limit_mm; }
     void SetBarStepLimits(G4double limit_mm) { fBarStepLimit = limit_mm; }
 
     void SetNoField() { fCreateField = false; }
     void SetFieldName(G4String name);
-
-    int GetBarID(int layer, int row);
-    int GetRow(int id);
-    int GetLayer(int id);
 
     void SetWallDetector(TWallDetector *wd) { fWallDetector = wd; }
 };

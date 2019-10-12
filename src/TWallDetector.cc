@@ -32,3 +32,31 @@ TVector3 TWallDetector::GetWallOffset() const
 {
   return TVector3(fDistTarget*sin(fRotationY), fYTarget, fDistTarget*cos(fRotationY)+fZTarget);
 }
+
+int TWallDetector::GetVetoID(int i) const
+{
+  return 3000 + i;
+}
+
+int TWallDetector::GetBarID(int layer, int row) const
+{
+  return 2000 + layer * 100 + row;
+}
+
+int TWallDetector::GetRow(int id) const
+{
+  if (id < 2000)
+    return -1;
+  id = id - 2000;
+  auto row = id - (id/100)*100;
+  return row;
+}
+
+int TWallDetector::GetLayer(int id) const
+{
+  if (id < 2000)
+    return -1;
+  id = id - 2000;
+  auto layer = id/100;
+  return layer;
+}

@@ -16,8 +16,10 @@ class TEventAction : public G4UserEventAction
     TDetectorConstruction *fDetectorConstruction = nullptr;
     TWallDetector *fWallDetector = nullptr;
 
-    double fEdepSumPrimary;
-    double fEdepSumSecondary;
+    double fEdepSumPrimary = 0.;
+    double fEdepSumSecondary = 0.;
+    double fEdepVeto = 0.;
+
     double fKinEnergy0;
     double fKinEnergy1;
     double fKinEnergy2;

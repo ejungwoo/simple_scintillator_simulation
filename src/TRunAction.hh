@@ -33,7 +33,8 @@ class TRunAction : public G4UserRunAction
                    G4ThreeVector pos1,
                    G4ThreeVector pos2,
                    double nlayers,
-                   double nbars);
+                   double nbars,
+                   double eveto);
 };
 
 #endif

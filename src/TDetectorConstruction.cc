@@ -43,13 +43,14 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
 
   auto matAir = nist -> FindOrBuildMaterial("G4_AIR");
   auto matBar = nist -> FindOrBuildMaterial("G4_XYLENE");
+  auto matVeto = nist -> FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
   auto matWallSpace = matAir;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   auto idWorld = 0;
   auto idTpc = 1;
-  auto idBar0 = GetBarID(0,0);
+  auto idBar0 = fWallDetector -> GetBarID(0,0);
   auto idWallSpace = 3;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -143,7 +144,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
   {
     PrintMessage("Set wall");
 
-    auto solidWallSpace = new G4Box("wallSpace", .6*lengthBar, .6*lengthBar, 2.*zThicknessWall);
+    auto solidWallSpace = new G4Box("wallSpace", .8*lengthBar, .8*lengthBar, 2.*zThicknessWall);
     auto logicWallSpace = new G4LogicalVolume(solidWallSpace, matWallSpace, "wallSpace");
     auto rotation = new G4RotationMatrix();
     rotation -> rotateY(-phiWallGlobal);
@@ -163,7 +164,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
         auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
           auto yOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
-          auto idBar = GetBarID(layer, row);
+          auto idBar = fWallDetector -> GetBarID(layer, row);
           new G4PVPlacement(0, G4ThreeVector(0,yOffsetBarLocal,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
         }
       }
@@ -182,12 +183,38 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
         auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
           auto xOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
-          auto idBar = GetBarID(layer, row);
+          auto idBar = fWallDetector -> GetBarID(layer, row);
           new G4PVPlacement(0, G4ThreeVector(xOffsetBarLocal,0,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
         }
       }
 
       auto att = new G4VisAttributes(G4Colour(G4Colour::Gray()));
+      att -> SetForceWireframe(true);
+      logicBar -> SetVisAttributes(att);
+    }
+
+    if (fSetBuildVeto)
+    {
+      double xLengthVetoBar     = fWallDetector -> GetXLengthVetoBar();
+      double yLengthVetoBar     = fWallDetector -> GetYLengthVetoBar();
+      double zLengthVetoBar     = fWallDetector -> GetZLengthVetoBar();
+      double xOffsetVetoBar0    = fWallDetector -> GetXOffsetVetoBar0();
+      double xOffsetVetoBarNext = fWallDetector -> GetXOffsetVetoBarNext();
+      double zOffsetVetoBar0    = fWallDetector -> GetZOffsetVetoBar(0);
+      double zOffsetVetoBar1    = fWallDetector -> GetZOffsetVetoBar(1);
+         int numVetoBars        = fWallDetector -> GetNumVetoBars();
+
+      auto solidBar = new G4Box("veto", .5*xLengthVetoBar, .5*yLengthVetoBar, .5*zLengthVetoBar);
+      auto logicBar = new G4LogicalVolume(solidBar, matVeto, "veto");
+      if (fBarStepLimit>0) logicBar -> SetUserLimits(new G4UserLimits(fBarStepLimit*mm));
+
+      for (auto iBar=0; iBar<numVetoBars; ++iBar) {
+        auto zOffsetBarLocal = iBar%2==0 ? zOffsetVetoBar0 : zOffsetVetoBar1;
+        auto idVeto = fWallDetector -> GetVetoID(iBar);
+        new G4PVPlacement(0, G4ThreeVector(xOffsetVetoBar0+xOffsetVetoBarNext*iBar,0,zOffsetBarLocal), logicBar, "veto", logicWallSpace, false, idVeto, true);
+      }
+
+      auto att = new G4VisAttributes(G4Colour(G4Colour::Yellow()));
       att -> SetForceWireframe(true);
       logicBar -> SetVisAttributes(att);
     }
@@ -215,26 +242,6 @@ void TDetectorConstruction::ConstructField()
 void TDetectorConstruction::PrintMessage(const char *message, const char *value)
 {
   G4cout << "  [TDetectorConstruction] " << message << value << G4endl;
-}
-
-int TDetectorConstruction::GetBarID(int layer, int row) { return 2000 + layer * 100 + row; }
-
-int TDetectorConstruction::GetRow(int id)
-{
-  if (id < 2000)
-    return -1;
-  id = id - 2000;
-  auto row = id - (id/100)*100;
-  return row;
-}
-
-int TDetectorConstruction::GetLayer(int id)
-{
-  if (id < 2000)
-    return -1;
-  id = id - 2000;
-  auto layer = id/100;
-  return layer;
 }
 
 void TDetectorConstruction::SetFieldName(G4String name)
