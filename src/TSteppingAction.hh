@@ -7,16 +7,21 @@
 #include "g4root.hh"
 
 #include "TEventAction.hh"
+#include "TWallDetector.hh"
 
 class TSteppingAction : public G4UserSteppingAction
 {
   private:
-    TEventAction *fEventAction;
+    TEventAction *fEventAction = nullptr;
+    TWallDetector *fWallDetector = nullptr;
 
   public:
-    TSteppingAction(TEventAction *eventAction);
+    TSteppingAction() : G4UserSteppingAction() {}
     virtual ~TSteppingAction() {}
     virtual void UserSteppingAction(const G4Step*);
+
+    void SetEventAction(TEventAction *ea) { fEventAction = ea; }
+    void SetWallDetector(TWallDetector *wd) { fWallDetector = wd; }
 };
 
 #endif

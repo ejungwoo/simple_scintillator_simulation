@@ -35,28 +35,44 @@ TVector3 TWallDetector::GetWallOffset() const
 
 int TWallDetector::GetVetoID(int i) const
 {
-  return 3000 + i;
+  return fVetoIDBase + i;
 }
 
 int TWallDetector::GetBarID(int layer, int row) const
 {
-  return 2000 + layer * 100 + row;
+  return fWallIDBase + layer * 100 + row;
 }
 
 int TWallDetector::GetRow(int id) const
 {
-  if (id < 2000)
+  if (id < fWallIDBase)
     return -1;
-  id = id - 2000;
+
+  id = id - fWallIDBase;
   auto row = id - (id/100)*100;
   return row;
 }
 
 int TWallDetector::GetLayer(int id) const
 {
-  if (id < 2000)
+  if (id < fWallIDBase)
     return -1;
-  id = id - 2000;
+
+  id = id - fWallIDBase;
   auto layer = id/100;
   return layer;
+}
+
+bool TWallDetector::IsWallID(int id)
+{
+  if (id < fWallIDBase || id > fWallIDMax)
+    return false;
+  return true;
+}
+
+bool TWallDetector::IsVetoID(int id)
+{
+  if (id < fVetoIDBase || id > fVetoIDMax)
+    return false;
+  return true;
 }

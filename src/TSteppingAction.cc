@@ -1,50 +1,42 @@
 #include "TSteppingAction.hh"
 #include "G4StepStatus.hh"
 
-TSteppingAction::TSteppingAction(TEventAction *eventAction)
-: G4UserSteppingAction()
-{
-  fEventAction = eventAction;
-}
-
 void TSteppingAction::UserSteppingAction(const G4Step* step)
 {
   auto preStep = step -> GetPreStepPoint();
   auto pstStep = step -> GetPostStepPoint();
 
-  auto preCopyNo = preStep -> GetPhysicalVolume() -> GetCopyNo();
-  if (preCopyNo >= 2000) {
-    fEventAction -> AddEnergyDeposit(
-        step -> GetTotalEnergyDeposit(),
-        preCopyNo,
-        step -> GetTrack() -> GetTrackID());
-  }
-
   if (pstStep -> GetStepStatus() == fWorldBoundary)
     return;
 
+  auto preCopyNo = preStep -> GetPhysicalVolume() -> GetCopyNo();
   auto pstCopyNo = pstStep -> GetPhysicalVolume() -> GetCopyNo();
 
-  if (step -> GetTrack() -> GetTrackID() == 1)
-  {
-    if (preCopyNo == 3 && pstCopyNo >= 2000)
-    {
-      fEventAction -> SetPoint1(
-          pstStep -> GetKineticEnergy(),
-          pstStep -> GetMomentum(),
-          pstStep -> GetGlobalTime(),
-          pstStep -> GetPosition()
-          );
-    }
+  bool isPrimaryTrack = (step -> GetTrack() -> GetTrackID() == 1);
 
-    if (preCopyNo >= 2000 && pstCopyNo == 3)
+  if (fWallDetector -> IsVetoID(preCopyNo)) {
+    auto edep = step -> GetTotalEnergyDeposit();
+    fEventAction -> AddEnergyDepositVeto(edep);
+  }
+  else if (fWallDetector -> IsWallID(preCopyNo)) {
+    auto edep = step -> GetTotalEnergyDeposit();
+    fEventAction -> AddEnergyDepositWall(edep, isPrimaryTrack);
+  }
+
+  if (isPrimaryTrack)
+  {
+    if (preCopyNo == 3)
     {
-      fEventAction -> SetPoint2(
-          pstStep -> GetKineticEnergy(),
-          pstStep -> GetMomentum(),
-          pstStep -> GetGlobalTime(),
-          pstStep -> GetPosition()
-          );
+      if (fWallDetector -> IsVetoID(pstCopyNo)) {
+        fEventAction -> SetPointStartOfVeto(pstStep -> GetGlobalTime());
+      }
+      else if (fWallDetector -> IsWallID(pstCopyNo)) {
+        fEventAction -> SetPointStartOfWall(
+            pstStep -> GetKineticEnergy(),
+            pstStep -> GetMomentum(),
+            pstStep -> GetGlobalTime()
+            );
+      }
     }
   }
 }

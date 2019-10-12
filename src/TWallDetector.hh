@@ -29,6 +29,12 @@ class TWallDetector
     double fZOffsetVetoBar[2] = {-363.58*CLHEP::mm, -340.58*CLHEP::mm};
     int fNumVetoBars = 8;
 
+    int fWallIDBase = 2000;
+    int fWallIDMax = fWallIDBase + 399;
+
+    int fVetoIDBase = 3000;
+    int fVetoIDMax = fVetoIDBase + 7;
+
   public:
     TWallDetector() {}
     ~TWallDetector() {}
@@ -63,6 +69,9 @@ class TWallDetector
     double GetXOffsetVetoBarNext() const { return fXOffsetVetoBarNext; }
     double GetZOffsetVetoBar(int i) const { return fZOffsetVetoBar[i]; }
     int GetNumVetoBars() const { return fNumVetoBars; }
+
+    bool IsWallID(int id);
+    bool IsVetoID(int id);
 };
 
 #endif

@@ -11,10 +11,12 @@ class TTrackingAction : public G4UserTrackingAction
     TEventAction *fEventAction;
 
   public:
-    TTrackingAction(TEventAction *runAction);
+    TTrackingAction(): G4UserTrackingAction() {}
     virtual ~TTrackingAction() {}
 
     virtual void PreUserTrackingAction(const G4Track *);
+
+    void SetEventAction(TEventAction *ea) { fEventAction = ea; }
 };
 
 #endif

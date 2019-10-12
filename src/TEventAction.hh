@@ -6,55 +6,49 @@
 #include "globals.hh"
 
 #include "TRunAction.hh"
-#include "TDetectorConstruction.hh"
 #include "TWallDetector.hh"
+
+typedef G4ThreeVector g4v3_t;
 
 class TEventAction : public G4UserEventAction
 {
   private:
     TRunAction* fRunAction = nullptr;
-    TDetectorConstruction *fDetectorConstruction = nullptr;
     TWallDetector *fWallDetector = nullptr;
 
     double fEdepSumPrimary = 0.;
     double fEdepSumSecondary = 0.;
-    double fEdepVeto = 0.;
+    double fEdepSumVeto = 0.;
 
-    double fKinEnergy0;
-    double fKinEnergy1;
-    double fKinEnergy2;
-    G4ThreeVector fMomentum0;
-    G4ThreeVector fMomentum1;
-    G4ThreeVector fMomentum2;
-    double fTime1;
-    double fTime2;
-    G4ThreeVector fPosition1;
-    G4ThreeVector fPosition2;
+    double fKinEnergyPrim;
+    double fKinEnergyWall;
 
-    bool fIsSetPoint0 = false;
-    bool fIsSetPoint1 = false;
-    bool fIsSetPoint2 = false;
+    double fTimeWall;
+    double fTimeVeto;
 
-    int fCountActiveLayer;
-    bool fIsActiveLayer[8];
+    g4v3_t fMomentumPrim;
+    g4v3_t fMomentumWall;
 
-    int fCountActiveBar;
-    bool fIsActiveBar[8][50];
+    bool fIsSetPointPrim = false;
+    bool fIsSetPointWall = false;
+    bool fIsSetPointVeto = false;
 
   public:
-    TEventAction(TRunAction *runAction);
+    TEventAction() : G4UserEventAction() {}
     virtual ~TEventAction() {}
+
+    void SetRunAction(TRunAction *wd) { fRunAction = wd; }
+    void SetWallDetector(TWallDetector *wd) { fWallDetector = wd; }
 
     virtual void BeginOfEventAction(const G4Event *);
     virtual void EndOfEventAction(const G4Event *);
 
-    void AddEnergyDeposit(double edep, int copyNo, int trackID);
-    void SetPoint0(double kine, G4ThreeVector momentum);
-    void SetPoint1(double kine, G4ThreeVector momentum, double time, G4ThreeVector pos);
-    void SetPoint2(double kine, G4ThreeVector momentum, double time, G4ThreeVector pos);
+    void AddEnergyDepositWall(double edep, bool isPrimaryTrack);
+    void AddEnergyDepositVeto(double edep);
 
-    void SetDetectorConstruction(TDetectorConstruction *dc) { fDetectorConstruction = dc; }
-    void SetWallDetector(TWallDetector *wd) { fWallDetector = wd; }
+    void SetPointPrimary(double kine, g4v3_t mom);
+    void SetPointStartOfWall(double kine, g4v3_t mom, double time);
+    void SetPointStartOfVeto(double time);
 };
 
 #endif

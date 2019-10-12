@@ -20,21 +20,15 @@ class TRunAction : public G4UserRunAction
     virtual void BeginOfRunAction(const G4Run*);
     virtual void EndOfRunAction(const G4Run*);
 
-    void FillEvent(double ep,
-                   double es,
-                   double k0,
-                   double k1,
-                   double k2,
-                   G4ThreeVector p0,
-                   G4ThreeVector p1,
-                   G4ThreeVector p2,
-                   double t1,
-                   double t2,
-                   G4ThreeVector pos1,
-                   G4ThreeVector pos2,
-                   double nlayers,
-                   double nbars,
-                   double eveto);
+    void FillEvent(
+        double ep,
+        double es,
+        double ev,
+        G4ThreeVector p0,
+        double k0,
+        double k1,
+        double tw,
+        double tv);
 };
 
 #endif

@@ -69,27 +69,30 @@ void TRunManager::BuildInitsAndActions()
     SetUserInitialization(myPhysicsList);
   }
 
-  auto wallDetector = new TWallDetector();
+  auto wallDetector = new TWallDetector;
 
-  auto detectorConstruction = new TDetectorConstruction();
+  auto detectorConstruction = new TDetectorConstruction;
   detectorConstruction -> SetWallDetector(wallDetector);
   SetUserInitialization(detectorConstruction);
 
-  auto primaryGenerator = new TPrimaryGeneratorAction();
+  auto primaryGenerator = new TPrimaryGeneratorAction;
   SetUserAction(primaryGenerator);
 
-  auto runAction = new TRunAction();
+  auto runAction = new TRunAction;
   SetUserAction(runAction);
 
-  auto eventAction = new TEventAction(runAction);
-  eventAction -> SetDetectorConstruction(detectorConstruction);
+  auto eventAction = new TEventAction;
+  eventAction -> SetRunAction(runAction);
   eventAction -> SetWallDetector(wallDetector);
   SetUserAction(eventAction);
 
-  auto trackingAction = new TTrackingAction(eventAction);
+  auto trackingAction = new TTrackingAction;
+  trackingAction -> SetEventAction(eventAction);
   SetUserAction(trackingAction);
 
-  auto steppingAction = new TSteppingAction(eventAction);
+  auto steppingAction = new TSteppingAction;
+  steppingAction -> SetEventAction(eventAction);
+  steppingAction -> SetWallDetector(wallDetector);
   SetUserAction(steppingAction);
 
   fMessenger = new TMessenger;

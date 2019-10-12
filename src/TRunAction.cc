@@ -5,25 +5,16 @@ TRunAction::TRunAction()
 : G4UserRunAction()
 {
   fAnalysisManager = G4RootAnalysisManager::Instance();
-
   fAnalysisManager -> CreateNtuple("event", "event");
-
-  fAnalysisManager -> CreateNtupleDColumn("edep_primary");
-  fAnalysisManager -> CreateNtupleDColumn("edep_secondary");
-  //fAnalysisManager -> CreateNtupleDColumn("nlayers");
-  //fAnalysisManager -> CreateNtupleDColumn("nbars");
-
-  fAnalysisManager -> CreateNtupleDColumn("kine0");
+  fAnalysisManager -> CreateNtupleDColumn("ep");
+  fAnalysisManager -> CreateNtupleDColumn("es");
+  fAnalysisManager -> CreateNtupleDColumn("ev");
+  fAnalysisManager -> CreateNtupleDColumn("k0");
+  fAnalysisManager -> CreateNtupleDColumn("kw");
   fAnalysisManager -> CreateNtupleDColumn("phi0");
   fAnalysisManager -> CreateNtupleDColumn("theta0");
-
-  fAnalysisManager -> CreateNtupleDColumn("kine1");
-  fAnalysisManager -> CreateNtupleDColumn("tof1");
-  fAnalysisManager -> CreateNtupleDColumn("x1");
-  fAnalysisManager -> CreateNtupleDColumn("y1");
-
-  fAnalysisManager -> CreateNtupleDColumn("edep_veto");
-
+  fAnalysisManager -> CreateNtupleDColumn("tw");
+  fAnalysisManager -> CreateNtupleDColumn("tv");
   fAnalysisManager -> FinishNtuple();
 }
 
@@ -43,35 +34,28 @@ void TRunAction::EndOfRunAction(const G4Run*)
   fAnalysisManager -> CloseFile();
 }
 
-void TRunAction::FillEvent(double ep,
-                           double es,
-                           double k0,
-                           double k1,
-                           double k2,
-                           G4ThreeVector p0,
-                           G4ThreeVector p1,
-                           G4ThreeVector p2,
-                           double t1,
-                           double t2,
-                           G4ThreeVector pos1,
-                           G4ThreeVector pos2,
-                           double nlayers,
-                           double nbars,
-                           double eveto)
+void TRunAction::FillEvent(
+    double ep,
+    double es,
+    double ev,
+    G4ThreeVector p0,
+    double k0,
+    double kw,
+    double tw,
+    double tv)
 {
   int countColumn = 0;
+  auto theta = std::atan2(sqrt(p0.x()*p0.x()+p0.z()*p0.z()),p0.y());
+
   fAnalysisManager -> FillNtupleDColumn(countColumn++, ep);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, es);
-  //fAnalysisManager -> FillNtupleDColumn(countColumn++, nlayers);
-  //fAnalysisManager -> FillNtupleDColumn(countColumn++, nbars);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, ev);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, k0);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, kw);
   fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(p0.x(),p0.z()));
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, std::atan2(sqrt(p0.x()*p0.x()+p0.z()*p0.z()),p0.y()));
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, k1);
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, t1);
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, pos1.x());
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, pos1.y());
-  fAnalysisManager -> FillNtupleDColumn(countColumn++, eveto);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, theta);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, tw);
+  fAnalysisManager -> FillNtupleDColumn(countColumn++, tv);
 
   fAnalysisManager -> AddNtupleRow();
 }
