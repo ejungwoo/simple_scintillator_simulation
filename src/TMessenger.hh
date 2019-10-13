@@ -57,6 +57,7 @@ class TMessenger : public G4UImessenger
     G4UIcmdWithADoubleAndUnit *fCmdParticleTheta1;
     G4UIcmdWithADoubleAndUnit *fCmdParticleTheta2;
 
+    G4UIcmdWithADoubleAndUnit *fCmdBarWidth;
     G4UIcmdWithADoubleAndUnit *fCmdDistTarget;
     G4UIcmdWithADoubleAndUnit *fCmdRotationY;
 };

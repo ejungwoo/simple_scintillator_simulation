@@ -33,17 +33,6 @@ void TEventAction::EndOfEventAction(const G4Event*)
       fTimeVeto);
 }
 
-void TEventAction::AddEnergyDepositWall(double edep, bool isPrimaryTrack)
-{
-  if (isPrimaryTrack) fEdepSumPrimary += edep;
-  else                fEdepSumSecondary += edep;
-}
-
-void TEventAction::AddEnergyDepositVeto(double edep)
-{
-  fEdepSumVeto += edep;
-}
-
 void TEventAction::SetPointPrimary(double kine, g4v3_t mom)
 {
   if (!fIsSetPointPrim) {
@@ -53,20 +42,25 @@ void TEventAction::SetPointPrimary(double kine, g4v3_t mom)
   }
 }
 
-void TEventAction::SetPointStartOfWall(double kine, g4v3_t mom, double time)
+void TEventAction::SetPointVeto(double time, double edep)
 {
+  fEdepSumVeto += edep;
+
+  if (!fIsSetPointVeto) {
+    fTimeVeto = time;
+    fIsSetPointVeto = true;
+  }
+}
+
+void TEventAction::SetPointWall(double kine, g4v3_t mom, double time, double edep, bool isPrimTrk)
+{
+  if (isPrimTrk) fEdepSumPrimary += edep;
+  else           fEdepSumSecondary += edep;
+
   if (!fIsSetPointWall) {
     fKinEnergyWall = kine;
     fMomentumWall = mom;
     fTimeWall = time;
     fIsSetPointWall = true;
-  }
-}
-
-void TEventAction::SetPointStartOfVeto(double time)
-{
-  if (!fIsSetPointVeto) {
-    fTimeVeto = time;
-    fIsSetPointVeto = true;
   }
 }

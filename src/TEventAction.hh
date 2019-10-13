@@ -43,12 +43,9 @@ class TEventAction : public G4UserEventAction
     virtual void BeginOfEventAction(const G4Event *);
     virtual void EndOfEventAction(const G4Event *);
 
-    void AddEnergyDepositWall(double edep, bool isPrimaryTrack);
-    void AddEnergyDepositVeto(double edep);
-
     void SetPointPrimary(double kine, g4v3_t mom);
-    void SetPointStartOfWall(double kine, g4v3_t mom, double time);
-    void SetPointStartOfVeto(double time);
+    void SetPointVeto(double time, double edep);
+    void SetPointWall(double kine, g4v3_t mom, double time, double edep, bool isPrimTrk);
 };
 
 #endif

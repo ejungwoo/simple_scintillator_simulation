@@ -9,34 +9,18 @@ void TSteppingAction::UserSteppingAction(const G4Step* step)
   if (pstStep -> GetStepStatus() == fWorldBoundary)
     return;
 
-  auto preCopyNo = preStep -> GetPhysicalVolume() -> GetCopyNo();
-  auto pstCopyNo = pstStep -> GetPhysicalVolume() -> GetCopyNo();
+  auto preID = preStep -> GetPhysicalVolume() -> GetCopyNo();
 
   bool isPrimaryTrack = (step -> GetTrack() -> GetTrackID() == 1);
+  auto time = preStep -> GetGlobalTime();
+  auto edep = step -> GetTotalEnergyDeposit();
 
-  if (fWallDetector -> IsVetoID(preCopyNo)) {
-    auto edep = step -> GetTotalEnergyDeposit();
-    fEventAction -> AddEnergyDepositVeto(edep);
+  if (fWallDetector -> IsVetoID(preID)) {
+    fEventAction -> SetPointVeto(time, edep);
   }
-  else if (fWallDetector -> IsWallID(preCopyNo)) {
-    auto edep = step -> GetTotalEnergyDeposit();
-    fEventAction -> AddEnergyDepositWall(edep, isPrimaryTrack);
-  }
-
-  if (isPrimaryTrack)
-  {
-    if (preCopyNo == 3)
-    {
-      if (fWallDetector -> IsVetoID(pstCopyNo)) {
-        fEventAction -> SetPointStartOfVeto(pstStep -> GetGlobalTime());
-      }
-      else if (fWallDetector -> IsWallID(pstCopyNo)) {
-        fEventAction -> SetPointStartOfWall(
-            pstStep -> GetKineticEnergy(),
-            pstStep -> GetMomentum(),
-            pstStep -> GetGlobalTime()
-            );
-      }
-    }
+  else if (fWallDetector -> IsWallID(preID)) {
+    auto energy = preStep -> GetKineticEnergy();
+    auto momentum = preStep -> GetMomentum();
+    fEventAction -> SetPointWall(energy, momentum, time, edep, isPrimaryTrack);
   }
 }

@@ -18,7 +18,8 @@ class TWallDetector
     double fDistTarget = 9093.85*CLHEP::mm;
     double fRotationY = 29.579*CLHEP::deg;
     double fBarLength = 2500.*CLHEP::mm;
-    double fBarWidth = 50.*CLHEP::mm;
+    //double fBarWidth = 50.*CLHEP::mm;
+    double fBarWidth = 47.*CLHEP::mm;
     int fNumLayers = 8;
 
     double fXLengthVetoBar = 320.*CLHEP::mm;
@@ -52,6 +53,7 @@ class TWallDetector
 
     void SetDistanceFromTheTarget(double distance) { fDistTarget = distance; }
     void SetRotationYGlobal(double rotation) { fRotationY = rotation; }
+    void SetBarWidth(double width) { fBarWidth = width; }
 
     double GetDistanceFromTheTarget() const { return fDistTarget; }
     double GetRotationYGlobal() const { return fRotationY; }
