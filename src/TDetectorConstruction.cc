@@ -163,7 +163,8 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
       for (auto layer : {0,2,4,6}) {
         auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
-          auto yOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
+          //auto yOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
+          auto yOffsetBarLocal = row*widthBar - .5*(widthBar*50) + .5*widthBar;
           auto idBar = fWallDetector -> GetBarID(layer, row);
           new G4PVPlacement(0, G4ThreeVector(0,yOffsetBarLocal,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
         }
@@ -182,7 +183,8 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
       for (auto layer : {1,3,5,7}) {
         auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
-          auto xOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
+          //auto xOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
+          auto xOffsetBarLocal = row*widthBar - .5*(widthBar*50) + .5*widthBar;
           auto idBar = fWallDetector -> GetBarID(layer, row);
           new G4PVPlacement(0, G4ThreeVector(xOffsetBarLocal,0,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
         }
