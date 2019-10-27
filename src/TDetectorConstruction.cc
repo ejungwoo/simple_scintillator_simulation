@@ -41,9 +41,14 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
        matGas -> AddMaterial(matArGas,      0.9*denArGas  /denGas);
        matGas -> AddMaterial(matMethaneGas, 0.1*denMethane/denGas);
 
+  auto denBC408 = 1.023*g/cm3;
+  auto matBC408 = new G4Material("matBC408", denBC408, 2, kStateSolid, labTemperature);
+       matBC408 -> AddElement(elH, 0.524);
+       matBC408 -> AddElement(elC, 0.476);
+
   auto matAir = nist -> FindOrBuildMaterial("G4_AIR");
-  auto matBar = nist -> FindOrBuildMaterial("G4_XYLENE");
-  auto matVeto = nist -> FindOrBuildMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  auto matVeto = matBC408;
+  auto matBar = matBC408;
   auto matWallSpace = matAir;
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +161,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
       logicWallSpace -> SetVisAttributes(att);
     }
 
+    // event layers
     {
       auto solidBar = new G4Box("bar", .5*lengthBar, .5*widthBar, .5*widthBar);
       auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
@@ -163,7 +169,6 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
       for (auto layer : {0,2,4,6}) {
         auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
-          //auto yOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
           auto yOffsetBarLocal = row*widthBar - .5*(widthBar*50) + .5*widthBar;
           auto idBar = fWallDetector -> GetBarID(layer, row);
           new G4PVPlacement(0, G4ThreeVector(0,yOffsetBarLocal,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
@@ -175,6 +180,7 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
       logicBar -> SetVisAttributes(att);
     }
 
+    // odd layers
     {
       auto solidBar = new G4Box("bar", .5*widthBar, .5*lengthBar, .5*widthBar);
       auto logicBar = new G4LogicalVolume(solidBar, matBar, "bar");
@@ -183,7 +189,6 @@ G4VPhysicalVolume* TDetectorConstruction::Construct()
       for (auto layer : {1,3,5,7}) {
         auto zOffsetBarLocal = widthBar*layer;
         for (auto row=0; row<50; ++row) {
-          //auto xOffsetBarLocal = row*widthBar - .5*lengthBar + .5*widthBar;
           auto xOffsetBarLocal = row*widthBar - .5*(widthBar*50) + .5*widthBar;
           auto idBar = fWallDetector -> GetBarID(layer, row);
           new G4PVPlacement(0, G4ThreeVector(xOffsetBarLocal,0,zOffsetBarLocal), logicBar, "bar", logicWallSpace, false, idBar, true);
